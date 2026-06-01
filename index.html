@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  <title>FOCO ARENA</title>
+  <meta name="description" content="Gestão de tempo, tarefas e rotina com pegada arcade — feito para o cérebro com TDAH.">
+  <meta name="theme-color" content="#070b18">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Foco Arena">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="toprow">
+      <div class="brand">⚽ FOCO ARENA</div>
+      <div class="toprow-right">
+        <div class="status" id="status">⏳ ...</div>
+        <button class="gear" id="gearBtn" title="Sincronização">⚙️</button>
+      </div>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud">
+      <div class="hud-top">
+        <div class="division" id="division">SÉRIE D<small id="divName">Divisão de Acesso</small></div>
+        <div class="streak"><span class="flame">🔥</span><b id="streakNum">0</b><span>seq.</span></div>
+      </div>
+      <div class="xpbar">
+        <div class="meta"><span>Próxima divisão</span><b id="xpToNext">0 / 100 XP</b></div>
+        <div class="track"><div class="fill" id="fill"></div></div>
+      </div>
+      <div class="hud-bottom">
+        <div class="escudos" id="escudos"><span class="sh">🛡️</span> 1 escudo</div>
+        <div class="pts" id="pts">0 PTS</div>
+      </div>
+    </div>
+
+    <div class="ctx" id="ctx"><span class="ic">⚡</span><span id="ctxText">Carregando...</span></div>
+
+    <!-- HOJE -->
+    <div class="section">
+      <div class="sec-head"><h2><span class="accent">▸</span> EM CAMPO HOJE</h2></div>
+      <div id="todayList"></div>
+      <button class="more" id="moreBtn" style="display:none;"></button>
+    </div>
+
+    <!-- ADICIONAR -->
+    <div class="section">
+      <div class="sec-head"><h2><span class="accent">+</span> ESCALAR</h2></div>
+      <div class="tabs">
+        <button class="tab active" data-mode="task" id="tabTask">Tarefa do dia</button>
+        <button class="tab" data-mode="habit" id="tabHabit">Hábito diário</button>
+      </div>
+      <div class="addbar">
+        <input id="addInput" placeholder="Ex: Emitir relatório semanal" maxlength="80">
+        <button class="btn" id="addBtn">ADD</button>
+      </div>
+    </div>
+
+    <div class="foot">
+      <b>FOCO ARENA</b> · Etapa 1 (núcleo) · sincronizado entre seus aparelhos.<br>
+      Próximas fases: Modo Agora (foco), Projetos, Vestiário de recompensas e o Rival Fantasma.
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Modal de sincronização -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h3>🔗 Sincronização</h3>
+      <p>Este é o <b>código do seu time</b>. Abra o app em outro aparelho e cole este código lá para ver os mesmos dados.</p>
+      <div class="codebox"><code id="myCode">—</code><button class="copybtn" id="copyBtn">Copiar</button></div>
+      <label>Entrar com um código de outro aparelho</label>
+      <input id="codeInput" placeholder="ARENA-XXXX-XXXX" autocapitalize="characters">
+      <div class="modal-actions">
+        <button class="m-link" id="linkBtn">CONECTAR</button>
+        <button class="m-close" id="closeBtn">FECHAR</button>
+      </div>
+      <div class="note" id="syncNote">Guarde seu código num lugar seguro: quem tiver ele acessa seus dados.</div>
+    </div>
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+    }
+  </script>
+</body>
+</html>

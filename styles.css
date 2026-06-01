@@ -102,6 +102,13 @@ body::before{
 .card:hover{border-color:rgba(0,229,255,.35);}
 .card.hab{border-left:3px solid var(--neon-purple);}
 .card.task{border-left:3px solid var(--neon-cyan);}
+.card.task.age-aging{border-left-color:var(--neon-orange);}
+.card.task.age-aging .sub{color:var(--neon-orange);}
+.card.task.age-rescue{border-left-color:var(--neon-pink);
+  box-shadow:0 0 18px rgba(255,45,149,.18);animation:rescue-pulse 2.4s ease-in-out infinite;}
+.card.task.age-rescue .sub{color:var(--neon-pink);}
+.card.task.age-rescue .xptag{color:var(--neon-pink);background:rgba(255,45,149,.1);border-color:rgba(255,45,149,.4);}
+@keyframes rescue-pulse{0%,100%{box-shadow:0 0 14px rgba(255,45,149,.16);}50%{box-shadow:0 0 26px rgba(255,45,149,.42);}}
 .card.step{border-left:3px solid var(--neon-yellow);}
 .card.done{opacity:.45;}
 .card.done .name{text-decoration:line-through;color:var(--muted);}

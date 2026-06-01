@@ -9,11 +9,13 @@
    ==================================================================== */
 
 /* ===================== CONFIG / ECONOMIA ===================== */
-const XP = { micro:5, task:10, habit:10, foco:15, streakBonus:20, ressuscitar:30 };
+const XP = { micro:5, task:10, habit:10, foco:15, streakBonus:20, ressuscitar:30, resgate:15 };
 const DAILY_MIN = 3;
 const ESCUDO_CAP = 3;
 const VISIBLE_LIMIT = 3;
 const PROJECT_ABANDON_DAYS = 7;
+const TASK_FLOOR = 3;          // tarefas nunca valem menos que isso
+const TASK_RESGATE_DAYS = 5;   // a partir desse dia, ganha +XP.resgate ao concluir
 const SEC_5 = 5*60, SEC_20 = 20*60, SEC_PAUSE = 5*60;
 
 const DIVISIONS = [
@@ -170,6 +172,11 @@ function addXP(amount,silent){
 function spendXP(amount){if(S.xp<amount)return false;S.xp-=amount;return true;}
 function currentDivision(){let i=0;for(let k=0;k<DIVISIONS.length;k++)if(S.totalXpEver>=DIVISIONS[k].need)i=k;return i;}
 
+/* ===================== TAREFA: idade & decay ===================== */
+function taskAge(task){return Math.max(0,daysBetween(task.date||todayKey(),todayKey()));}
+function taskXP(task){return Math.max(TASK_FLOOR, XP.task - taskAge(task));}
+function taskIsRescue(task){return taskAge(task) >= TASK_RESGATE_DAYS;}
+
 /* ===================== WEEKLY ===================== */
 function weeklyXP(weekStartDate){let s=0;weekDates(weekStartDate).forEach(k=>{s+=(S.history[k]?.xp||0);});return s;}
 function rivalState(){
@@ -238,8 +245,16 @@ function getTodayItems(){
   const t=todayKey();const items=[];
   S.habits.forEach(h=>items.push({kind:'habit',id:h.id,name:h.name,icon:h.icon||'🔁',
     sub:h.sub||'Hábito diário',done:(h.doneDates||[]).includes(t),xp:XP.habit}));
-  S.tasks.forEach(tk=>items.push({kind:'task',id:tk.id,name:tk.name,icon:'🎯',
-    sub:'Tarefa do dia',done:tk.done,xp:XP.task}));
+  S.tasks.forEach(tk=>{
+    const age=taskAge(tk);
+    const xp=taskXP(tk);
+    const rescue=taskIsRescue(tk);
+    let sub='Tarefa do dia';
+    if(rescue) sub='🔥 '+age+' dias parada · resgate +'+XP.resgate;
+    else if(age>=2) sub=age+' dias parada · -'+(XP.task-xp)+' pts';
+    else if(age===1) sub='1 dia parada · -1 pt';
+    items.push({kind:'task',id:tk.id,name:tk.name,icon:'🎯',sub,done:tk.done,xp,age,rescue});
+  });
   // próximo passo do projeto mais recente (não abandonado, não concluído)
   const activeProjs=S.projects
     .filter(p=>!isProjectDone(p))
@@ -260,7 +275,8 @@ function renderToday(){
   shown.forEach((it,i)=>{
     const c=document.createElement('div');
     const cls=it.kind==='habit'?'hab':it.kind==='step'?'step':'task';
-    c.className='card '+cls+(it.done?' done':'');
+    const ageCls=it.rescue?' age-rescue':(it.age!==undefined && it.age>=2)?' age-aging':'';
+    c.className='card '+cls+ageCls+(it.done?' done':'');
     c.style.animationDelay=(i*0.04)+'s';
     c.innerHTML=`<div class="check" data-act="toggle" data-kind="${it.kind}" data-id="${it.id}"${it.projectId?` data-pid="${it.projectId}"`:''}>✓</div>
       <div class="ic-emoji">${it.icon}</div>
@@ -675,8 +691,18 @@ function toggle(kind,id,el,pid){
   const t=todayKey();
   if(kind==='task'){
     const tk=S.tasks.find(x=>x.id===id);if(!tk)return;
+    const wasNotDone=!tk.done;
     tk.done=!tk.done;
-    if(tk.done){celebrate(el,addXP(XP.task));registerProgress('item');}
+    if(tk.done && wasNotDone){
+      const rescue=taskIsRescue(tk);
+      const xpVal=taskXP(tk);
+      celebrate(el,addXP(xpVal));
+      if(rescue){
+        addXP(XP.resgate,true);
+        setTimeout(()=>toast('LIMPEZA DE BACKLOG! 🧹','+'+XP.resgate+' pts de resgate'),900);
+      }
+      registerProgress('item');
+    }
   } else if(kind==='habit'){
     const hb=S.habits.find(x=>x.id===id);if(!hb)return;
     hb.doneDates=hb.doneDates||[];

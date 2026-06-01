@@ -10,6 +10,7 @@
   <link rel="icon" href="icons/favicon.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Foco Arena">
   <link rel="stylesheet" href="styles.css">
@@ -24,7 +25,7 @@
       </div>
     </div>
 
-    <!-- HUD -->
+    <!-- HUD (persistente) -->
     <div class="hud">
       <div class="hud-top">
         <div class="division" id="division">SÉRIE D<small id="divName">Divisão de Acesso</small></div>
@@ -42,35 +43,112 @@
 
     <div class="ctx" id="ctx"><span class="ic">⚡</span><span id="ctxText">Carregando...</span></div>
 
-    <!-- HOJE -->
-    <div class="section">
-      <div class="sec-head"><h2><span class="accent">▸</span> EM CAMPO HOJE</h2></div>
-      <div id="todayList"></div>
-      <button class="more" id="moreBtn" style="display:none;"></button>
+    <!-- ============ VIEW: HOJE ============ -->
+    <div class="view active" id="view-hoje">
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">▸</span> EM CAMPO HOJE</h2></div>
+        <div id="todayList"></div>
+        <button class="more" id="moreBtn" style="display:none;"></button>
+      </div>
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">+</span> ESCALAR</h2></div>
+        <div class="tabs">
+          <button class="tab active" data-mode="task" id="tabTask">Tarefa do dia</button>
+          <button class="tab" data-mode="habit" id="tabHabit">Hábito diário</button>
+        </div>
+        <div class="addbar">
+          <input id="addInput" placeholder="Ex: Emitir relatório semanal" maxlength="80">
+          <button class="btn" id="addBtn">ADD</button>
+        </div>
+      </div>
     </div>
 
-    <!-- ADICIONAR -->
-    <div class="section">
-      <div class="sec-head"><h2><span class="accent">+</span> ESCALAR</h2></div>
-      <div class="tabs">
-        <button class="tab active" data-mode="task" id="tabTask">Tarefa do dia</button>
-        <button class="tab" data-mode="habit" id="tabHabit">Hábito diário</button>
+    <!-- ============ VIEW: PROJETOS ============ -->
+    <div class="view" id="view-projetos">
+      <div class="section">
+        <div class="sec-head">
+          <h2><span class="accent">▸</span> CAMPEONATOS</h2>
+          <button class="mini-btn" id="newProjectBtn">+ NOVO</button>
+        </div>
+        <div id="projectsList"></div>
       </div>
-      <div class="addbar">
-        <input id="addInput" placeholder="Ex: Emitir relatório semanal" maxlength="80">
-        <button class="btn" id="addBtn">ADD</button>
+    </div>
+
+    <!-- ============ VIEW: VESTIÁRIO ============ -->
+    <div class="view" id="view-vestiario">
+      <div class="section">
+        <div class="sec-head">
+          <h2><span class="accent">▸</span> VESTIÁRIO</h2>
+          <div class="balance" id="balance">0 PTS</div>
+        </div>
+        <p class="hint">Use seus pontos pra liberar suas recompensas sem culpa. Você ganhou.</p>
+        <div id="rewardsList"></div>
+        <button class="more" id="addRewardBtn">+ adicionar nova recompensa</button>
+      </div>
+      <div class="section" id="historySection" style="display:none;">
+        <div class="sec-head"><h2><span class="accent">▸</span> ÚLTIMAS RECOMPENSAS</h2></div>
+        <div id="rewardsHistory"></div>
+      </div>
+    </div>
+
+    <!-- ============ VIEW: LIGA ============ -->
+    <div class="view" id="view-liga">
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">▸</span> DUELO DA SEMANA</h2></div>
+        <div class="duel" id="duel">
+          <div class="duel-side">
+            <div class="duel-label">VOCÊ</div>
+            <div class="duel-score" id="myScore">0</div>
+          </div>
+          <div class="duel-vs">VS</div>
+          <div class="duel-side rival">
+            <div class="duel-label">RIVAL 👻</div>
+            <div class="duel-score" id="rivalScore">0</div>
+          </div>
+        </div>
+        <div class="duel-bar"><div class="duel-fill" id="duelFill"></div></div>
+        <div class="duel-status" id="duelStatus">—</div>
+      </div>
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">▸</span> RECORDES</h2></div>
+        <div class="records" id="records"></div>
+      </div>
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">▸</span> HISTÓRICO DE RODADAS</h2></div>
+        <div id="weeklyHistory"></div>
       </div>
     </div>
 
     <div class="foot">
-      <b>FOCO ARENA</b> · Etapa 1 (núcleo) · sincronizado entre seus aparelhos.<br>
-      Próximas fases: Modo Agora (foco), Projetos, Vestiário de recompensas e o Rival Fantasma.
+      <b>FOCO ARENA</b> · v1.0 completo · sincronizado entre seus aparelhos.
     </div>
   </div>
 
-  <div id="toast"></div>
+  <!-- Bottom nav -->
+  <nav class="bnav">
+    <button class="bnav-btn active" data-view="hoje"><span>🏟️</span><b>Hoje</b></button>
+    <button class="bnav-btn" data-view="projetos"><span>🎯</span><b>Projetos</b></button>
+    <button class="bnav-btn" data-view="vestiario"><span>🛒</span><b>Vestiário</b></button>
+    <button class="bnav-btn" data-view="liga"><span>⚽</span><b>Liga</b></button>
+  </nav>
 
-  <!-- Modal de sincronização -->
+  <!-- ============ MODO AGORA (foco) ============ -->
+  <div class="focus" id="focus">
+    <button class="focus-close" id="focusClose">✕</button>
+    <div class="focus-task" id="focusTask">—</div>
+    <div class="focus-stage" id="focusStage">Compromisso de 5 minutos</div>
+    <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" r="108" class="ring-bg"/>
+        <circle cx="120" cy="120" r="108" class="ring-fg" id="ringFg"/>
+      </svg>
+      <div class="ring-time" id="ringTime">05:00</div>
+    </div>
+    <div class="focus-actions" id="focusActions"></div>
+    <div class="focus-hint" id="focusHint">A única missão é começar. Vai, 5 minutos.</div>
+  </div>
+
+  <!-- Modal de sync -->
   <div class="overlay" id="overlay">
     <div class="modal">
       <h3>🔗 Sincronização</h3>
@@ -86,7 +164,19 @@
     </div>
   </div>
 
-  <!-- Supabase JS -->
+  <!-- Modal genérico (criar projeto, recompensa, etc.) -->
+  <div class="overlay" id="formOverlay">
+    <div class="modal" id="formModal"></div>
+  </div>
+
+  <!-- Modal de detalhe de projeto -->
+  <div class="overlay" id="projDetailOverlay">
+    <div class="modal modal-wide" id="projDetailModal"></div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>

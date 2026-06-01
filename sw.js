@@ -1,5 +1,5 @@
-// FOCO ARENA service worker — cache do app shell (offline) + sync continua online
-const CACHE = 'foco-arena-v1';
+// FOCO ARENA service worker — v2 (Etapas 1-5 completas)
+const CACHE = 'foco-arena-v2';
 const SHELL = ['./','./index.html','./styles.css','./app.js','./config.js',
   './manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/favicon.png'];
 
@@ -12,11 +12,9 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  // chamadas ao Supabase e fontes: sempre rede (não cachear dados)
-  if (url.hostname.includes('supabase') || url.hostname.includes('googleapis') || url.hostname.includes('jsdelivr')) {
-    return; // deixa passar direto pra rede
+  if (url.hostname.includes('supabase') || url.hostname.includes('googleapis') || url.hostname.includes('jsdelivr') || url.hostname.includes('gstatic')) {
+    return;
   }
-  // app shell: cache primeiro, rede como fallback
   e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(resp=>{
     const copy = resp.clone();
     caches.open(CACHE).then(c=>c.put(e.request, copy)).catch(()=>{});

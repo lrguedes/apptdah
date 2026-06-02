@@ -246,14 +246,22 @@ function getTodayItems(){
   S.habits.forEach(h=>items.push({kind:'habit',id:h.id,name:h.name,icon:h.icon||'🔁',
     sub:h.sub||'Hábito diário',done:(h.doneDates||[]).includes(t),xp:XP.habit}));
   S.tasks.forEach(tk=>{
-    const age=taskAge(tk);
-    const xp=taskXP(tk);
-    const rescue=taskIsRescue(tk);
-    let sub='Tarefa do dia';
-    if(rescue) sub='🔥 '+age+' dias parada · resgate +'+XP.resgate;
-    else if(age>=2) sub=age+' dias parada · -'+(XP.task-xp)+' pts';
-    else if(age===1) sub='1 dia parada · -1 pt';
-    items.push({kind:'task',id:tk.id,name:tk.name,icon:'🎯',sub,done:tk.done,xp,age,rescue});
+    if(tk.done){
+      // tarefa concluída: usa o XP congelado que ela rendeu no dia, não recalcula
+      const earned = tk.xpEarned!=null ? tk.xpEarned : XP.task;
+      items.push({kind:'task',id:tk.id,name:tk.name,icon:'🎯',
+        sub: tk.wasRescue ? '🧹 Resgatada · rendeu '+earned+' pts' : 'Concluída ✓',
+        done:true, xp:earned, age:0, rescue:false});
+    } else {
+      const age=taskAge(tk);
+      const xp=taskXP(tk);
+      const rescue=taskIsRescue(tk);
+      let sub='Tarefa do dia';
+      if(rescue) sub='🔥 '+age+' dias parada · resgate +'+XP.resgate;
+      else if(age>=2) sub=age+' dias parada · -'+(XP.task-xp)+' pts';
+      else if(age===1) sub='1 dia parada · -1 pt';
+      items.push({kind:'task',id:tk.id,name:tk.name,icon:'🎯',sub,done:false,xp,age,rescue});
+    }
   });
   // próximo passo do projeto mais recente (não abandonado, não concluído)
   const activeProjs=S.projects
@@ -696,11 +704,17 @@ function toggle(kind,id,el,pid){
     if(tk.done && wasNotDone){
       const rescue=taskIsRescue(tk);
       const xpVal=taskXP(tk);
-      celebrate(el,addXP(xpVal));
+      const res=addXP(xpVal);
+      let earned=res.gained;
+      celebrate(el,res);
       if(rescue){
-        addXP(XP.resgate,true);
+        const r2=addXP(XP.resgate,true);
+        earned+=r2.gained;
         setTimeout(()=>toast('LIMPEZA DE BACKLOG! 🧹','+'+XP.resgate+' pts de resgate'),900);
       }
+      tk.doneDate=todayKey();
+      tk.xpEarned=earned;
+      tk.wasRescue=rescue;
       registerProgress('item');
     }
   } else if(kind==='habit'){

@@ -15,13 +15,29 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { system, messages, max_tokens = 1800, model = 'claude-haiku-4-5' } = req.body || {};
+    const {
+      system,
+      messages,
+      max_tokens = 1800,
+      model = 'claude-haiku-4-5',
+      use_web_search = false,
+    } = req.body || {};
+
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       res.status(400).json({ error: 'Campo "messages" é obrigatório.' });
       return;
     }
+
     const payload = { model, max_tokens, messages };
     if (system) payload.system = system;
+
+    // Ativa busca na web quando solicitado (jogos do dia, etc.)
+    if (use_web_search) {
+      payload.tools = [{
+        type: 'web_search_20250305',
+        name: 'web_search',
+      }];
+    }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -29,12 +45,24 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'web-search-2025-03-05',
       },
       body: JSON.stringify(payload),
     });
 
     const data = await response.json();
-    res.status(response.status).json(data);
+
+    // Extrai apenas os blocos de texto da resposta (ignora tool_use/tool_result)
+    if (use_web_search && data.content) {
+      const textOnly = data.content
+        .filter(b => b.type === 'text')
+        .map(b => b.text)
+        .join('');
+      res.status(response.status).json({ ...data, text_only: textOnly });
+    } else {
+      res.status(response.status).json(data);
+    }
+
   } catch (err) {
     res.status(500).json({ error: err.message || 'Erro interno no proxy.' });
   }

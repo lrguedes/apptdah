@@ -460,11 +460,14 @@ function showLoading(title='Consultando IA…',sub='Aguenta uns segundinhos.'){
 }
 function hideLoading(){$('loadingOverlay').classList.remove('show');}
 
-async function callAI(messages,system,max_tokens=1800){
+async function callAI(messages, system, max_tokens=1800, use_web_search=false){
+  const model = use_web_search ? 'claude-sonnet-4-5' : 'claude-haiku-4-5';
   const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({messages,system,max_tokens,model:'claude-haiku-4-5'})});
+    body:JSON.stringify({messages,system,max_tokens,model,use_web_search})});
   if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'Erro '+r.status);}
   const data=await r.json();
+  // se veio com web search, usa o campo text_only já extraído no proxy
+  if(use_web_search && data.text_only!=null) return data.text_only;
   return(data.content||[]).map(c=>c.text||'').join('').trim();
 }
 
@@ -559,18 +562,24 @@ function formatLetter(text){
 async function loadMatches(){
   const refreshBtn=$('refreshMatches');
   if(refreshBtn)refreshBtn.textContent='⏳';
-  showLoading('Buscando jogos…','Checando os campeonatos do dia.');
+  showLoading('Buscando jogos de hoje…','Pesquisando na web os jogos do dia.');
   try{
     const today=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const raw=await callAI(
-      [{role:'user',content:`Hoje é ${today}. Liste os principais jogos de futebol que acontecem HOJE nos seguintes campeonatos: Brasileirão Série A, Libertadores, Sul-Americana, Copa do Mundo, Premier League, La Liga, Champions League. Foque em jogos com o Corinthians se houver. Retorne APENAS JSON válido neste formato exato, sem texto extra:\n[{"home":"Time A","away":"Time B","league":"Nome do campeonato","time":"19:00","live":false}]\nSe não houver jogos hoje, retorne: []`}],
-      'Você é um assistente de dados esportivos. Retorne apenas JSON válido, sem markdown, sem explicações.'
+    const text=await callAI(
+      [{role:'user',content:`Pesquise na web e liste TODOS os jogos de futebol que acontecem HOJE (${today}) nos seguintes campeonatos: Brasileirão Série A, Copa Libertadores, Copa Sul-Americana, Copa do Mundo FIFA, Premier League, La Liga, Champions League, e qualquer jogo do Corinthians. Para cada jogo informe: times, campeonato e horário (horário de Brasília). Retorne APENAS um array JSON válido, sem texto extra, sem markdown:\n[{"home":"Time A","away":"Time B","league":"Nome do campeonato","time":"19:00","live":false}]\nSe realmente não houver nenhum jogo hoje nesses campeonatos, retorne exatamente: []`}],
+      'Você é um assistente esportivo. Pesquise na web os jogos de futebol de hoje e retorne apenas JSON válido.',
+      1200,
+      true
     );
     let matches=[];
-    try{const clean=text.replace(/```json?|```/g,'').trim();matches=JSON.parse(clean);}catch(e){matches=[];}
+    try{
+      const clean=text.replace(/```json?|```/g,'').trim();
+      const m=clean.match(/\[[\s\S]*\]/);
+      matches=m?JSON.parse(m[0]):[];
+    }catch(e){matches=[];}
     S.matchesCache={date:todayKey(),data:matches};persist();
     showMatches(matches);
-  }catch(e){$('matchesList').innerHTML='<div class="empty small">Erro ao carregar jogos. Verifique a API key.</div>';}
+  }catch(e){$('matchesList').innerHTML='<div class="empty small">Erro ao carregar jogos: '+esc(e.message)+'</div>';}
   finally{hideLoading();if(refreshBtn)refreshBtn.textContent='↻';}
 }
 

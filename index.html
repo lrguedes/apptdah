@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
   <title>FOCO ARENA</title>
-  <meta name="description" content="Gestão de tempo, tarefas e rotina com pegada arcade — feito para o cérebro com TDAH.">
+  <meta name="description" content="Central de operações pessoal — arcade neon feito pro cérebro com TDAH.">
   <meta name="theme-color" content="#070b18">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/favicon.png">
@@ -25,19 +25,19 @@
       </div>
     </div>
 
-    <!-- HUD (persistente) -->
+    <!-- HUD persistente -->
     <div class="hud">
       <div class="hud-top">
-        <div class="division" id="division">SÉRIE D<small id="divName">Divisão de Acesso</small></div>
+        <div class="division" id="division">SÉRIE D<small id="divName">Temporada do mês</small></div>
         <div class="streak"><span class="flame">🔥</span><b id="streakNum">0</b><span>seq.</span></div>
       </div>
       <div class="xpbar">
-        <div class="meta"><span>Próxima divisão</span><b id="xpToNext">0 / 100 XP</b></div>
+        <div class="meta"><span id="xpBarLabel">Próxima divisão</span><b id="xpToNext">0 / 100 XP</b></div>
         <div class="track"><div class="fill" id="fill"></div></div>
       </div>
       <div class="hud-bottom">
         <div class="escudos" id="escudos"><span class="sh">🛡️</span> 1 escudo</div>
-        <div class="pts" id="pts">0 PTS</div>
+        <div class="lifetime" id="lifetime">⭐ 0 lifetime</div>
       </div>
     </div>
 
@@ -45,11 +45,23 @@
 
     <!-- ============ VIEW: HOJE ============ -->
     <div class="view active" id="view-hoje">
+      <div class="section matches-section">
+        <div class="sec-head">
+          <h2><span class="accent">⚽</span> JOGOS DE HOJE</h2>
+          <button class="mini-btn" id="refreshMatches" title="Atualizar jogos">↻</button>
+        </div>
+        <div id="matchesList"><div class="empty small">Toque em ↻ pra carregar os jogos do dia.</div></div>
+      </div>
+
       <div class="section">
-        <div class="sec-head"><h2><span class="accent">▸</span> EM CAMPO HOJE</h2></div>
+        <div class="sec-head">
+          <h2><span class="accent">▸</span> EM CAMPO HOJE</h2>
+          <div class="goal-chip" id="goalChip">—</div>
+        </div>
         <div id="todayList"></div>
         <button class="more" id="moreBtn" style="display:none;"></button>
       </div>
+
       <div class="section">
         <div class="sec-head"><h2><span class="accent">+</span> ESCALAR</h2></div>
         <div class="tabs">
@@ -63,31 +75,56 @@
       </div>
     </div>
 
-    <!-- ============ VIEW: PROJETOS ============ -->
-    <div class="view" id="view-projetos">
+    <!-- ============ VIEW: FÉ ============ -->
+    <div class="view" id="view-fe">
       <div class="section">
         <div class="sec-head">
-          <h2><span class="accent">▸</span> CAMPEONATOS</h2>
-          <button class="mini-btn" id="newProjectBtn">+ NOVO</button>
+          <h2><span class="accent">⛪</span> LITURGIA DE HOJE</h2>
+          <button class="mini-btn ai-btn" id="loadReadingBtn">✨ GERAR</button>
         </div>
-        <div id="projectsList"></div>
+        <div id="readingContent" class="reading-box"><div class="empty small">Toque em <b>✨ GERAR</b> pra buscar a primeira leitura, evangelho e reflexão do dia.</div></div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">✍️</span> SUA REFLEXÃO</h2></div>
+        <textarea id="reflectInput" placeholder="O que ficou pra você hoje? Escreve livre, sem pressão. Vai virar matéria-prima das cartas do Frei."></textarea>
+        <div class="row">
+          <div class="hint small" id="todayReflectStatus"></div>
+          <button class="btn" id="saveReflectBtn">SALVAR</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head">
+          <h2><span class="accent">💌</span> CARTA DO FREI · SEMANAL</h2>
+          <button class="mini-btn ai-btn" id="weekCardBtn">✨ GERAR</button>
+        </div>
+        <div class="hint" id="intentionBox"></div>
+        <div id="weekCard" class="card-letter"><div class="empty small">Gere uma carta semanal a partir das suas reflexões.</div></div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">📜</span> REFLEXÕES RECENTES</h2></div>
+        <div id="reflectionsList"></div>
       </div>
     </div>
 
-    <!-- ============ VIEW: VESTIÁRIO ============ -->
-    <div class="view" id="view-vestiario">
+    <!-- ============ VIEW: TROFÉUS ============ -->
+    <div class="view" id="view-trofeus">
       <div class="section">
         <div class="sec-head">
-          <h2><span class="accent">▸</span> VESTIÁRIO</h2>
-          <div class="balance" id="balance">0 PTS</div>
+          <h2><span class="accent">🏆</span> CARTA DO MÊS</h2>
+          <button class="mini-btn ai-btn" id="monthCardBtn">✨ GERAR</button>
         </div>
-        <p class="hint">Use seus pontos pra liberar suas recompensas sem culpa. Você ganhou.</p>
-        <div id="rewardsList"></div>
-        <button class="more" id="addRewardBtn">+ adicionar nova recompensa</button>
+        <div id="monthCard" class="card-letter"><div class="empty small">A carta lê toda sua evolução do mês — tarefas, foco, sequências, reflexões, troféus — e devolve um balanço com intenção pro próximo mês.</div></div>
       </div>
-      <div class="section" id="historySection" style="display:none;">
-        <div class="sec-head"><h2><span class="accent">▸</span> ÚLTIMAS RECOMPENSAS</h2></div>
-        <div id="rewardsHistory"></div>
+
+      <div class="section">
+        <div class="sec-head">
+          <h2><span class="accent">🎖️</span> SALA DE TROFÉUS</h2>
+          <div class="goal-chip" id="trophyCount">0 / 0</div>
+        </div>
+        <div id="trophyGrid" class="trophy-grid"></div>
       </div>
     </div>
 
@@ -119,17 +156,46 @@
       </div>
     </div>
 
+    <!-- ============ VIEW: IANAOBRA ============ -->
+    <div class="view" id="view-ianaobra">
+      <div class="section">
+        <div class="sec-head">
+          <h2><span class="accent">🧱</span> IANAOBRA</h2>
+          <button class="mini-btn" id="obraConfigBtn" title="Configurar canal">⚙️</button>
+        </div>
+        <p class="hint small">Planner de conteúdo. Toque num dia pra escrever a ideia ou marcar o post executado.</p>
+      </div>
+
+      <div class="section">
+        <div class="cal-head">
+          <button class="cal-nav" id="calPrev">‹</button>
+          <div class="cal-title" id="calTitle">—</div>
+          <button class="cal-nav" id="calNext">›</button>
+        </div>
+        <div class="cal-grid-head">
+          <div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div><div>D</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div class="section">
+        <button class="big-ai-btn" id="ideasBtn">✨ ME DÊ IDEIAS DE CONTEÚDO</button>
+        <div id="ideasOutput"></div>
+      </div>
+    </div>
+
     <div class="foot">
-      <b>FOCO ARENA</b> · v1.1 · com decay de tarefas · sincronizado entre seus aparelhos.
+      <b>FOCO ARENA</b> · v2.0 central de operações
     </div>
   </div>
 
   <!-- Bottom nav -->
   <nav class="bnav">
     <button class="bnav-btn active" data-view="hoje"><span>🏟️</span><b>Hoje</b></button>
-    <button class="bnav-btn" data-view="projetos"><span>🎯</span><b>Projetos</b></button>
-    <button class="bnav-btn" data-view="vestiario"><span>🛒</span><b>Vestiário</b></button>
+    <button class="bnav-btn" data-view="fe"><span>⛪</span><b>Fé</b></button>
+    <button class="bnav-btn" data-view="trofeus"><span>🏆</span><b>Troféus</b></button>
     <button class="bnav-btn" data-view="liga"><span>⚽</span><b>Liga</b></button>
+    <button class="bnav-btn" data-view="ianaobra"><span>🧱</span><b>Obra</b></button>
   </nav>
 
   <!-- ============ MODO AGORA (foco) ============ -->
@@ -164,14 +230,18 @@
     </div>
   </div>
 
-  <!-- Modal genérico (criar projeto, recompensa, etc.) -->
+  <!-- Modal genérico (editor de dia da Obra, config do canal, etc.) -->
   <div class="overlay" id="formOverlay">
     <div class="modal" id="formModal"></div>
   </div>
 
-  <!-- Modal de detalhe de projeto -->
-  <div class="overlay" id="projDetailOverlay">
-    <div class="modal modal-wide" id="projDetailModal"></div>
+  <!-- Modal de loading (durante chamadas à IA) -->
+  <div class="overlay" id="loadingOverlay">
+    <div class="modal loading-modal">
+      <div class="spinner"></div>
+      <h3 id="loadingTitle">Consultando IA…</h3>
+      <p id="loadingSub">Aguenta uns segundinhos.</p>
+    </div>
   </div>
 
   <div id="toast"></div>

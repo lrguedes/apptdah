@@ -25,19 +25,24 @@
       </div>
     </div>
 
-    <!-- HUD persistente -->
+    <!-- HUD com avatar jogador -->
     <div class="hud">
-      <div class="hud-top">
-        <div class="division" id="division">SÉRIE D<small id="divName">Temporada do mês</small></div>
+      <div class="hud-player">
+        <div class="avatar-wrap" id="avatarWrap">
+          <!-- SVG pixel art gerado via JS -->
+        </div>
+        <div class="player-info">
+          <div class="player-career" id="playerCareer">ESCOLINHA</div>
+          <div class="player-club" id="playerClub">Dando os primeiros toques</div>
+          <div class="player-xp" id="playerXpLabel">0 / 100 XP</div>
+          <div class="track"><div class="fill" id="fill"></div></div>
+        </div>
         <div class="streak"><span class="flame">🔥</span><b id="streakNum">0</b><span>seq.</span></div>
-      </div>
-      <div class="xpbar">
-        <div class="meta"><span id="xpBarLabel">Próxima divisão</span><b id="xpToNext">0 / 100 XP</b></div>
-        <div class="track"><div class="fill" id="fill"></div></div>
       </div>
       <div class="hud-bottom">
         <div class="escudos" id="escudos"><span class="sh">🛡️</span> 1 escudo</div>
-        <div class="lifetime" id="lifetime">⭐ 0 lifetime</div>
+        <div class="xp-month" id="xpMonth">📅 0 XP este mês</div>
+        <div class="lifetime" id="lifetime">⭐ 0 total</div>
       </div>
     </div>
 
@@ -45,14 +50,25 @@
 
     <!-- ============ VIEW: HOJE ============ -->
     <div class="view active" id="view-hoje">
+
+      <!-- Motivacional do dia -->
+      <div class="motiv-box" id="motivBox"></div>
+
+      <!-- Box jogos (colapsável) -->
       <div class="section matches-section">
-        <div class="sec-head">
+        <div class="sec-head clickable" id="matchesToggle">
           <h2><span class="accent">⚽</span> JOGOS DE HOJE</h2>
-          <button class="mini-btn" id="refreshMatches" title="Atualizar jogos">↻</button>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="mini-btn" id="refreshMatches" title="Atualizar jogos">↻</button>
+            <span class="collapse-arrow" id="matchesArrow">▼</span>
+          </div>
         </div>
-        <div id="matchesList"><div class="empty small">Toque em ↻ pra carregar os jogos do dia.</div></div>
+        <div id="matchesBody">
+          <div id="matchesList"><div class="empty small">Toque em ↻ pra carregar os jogos do dia.</div></div>
+        </div>
       </div>
 
+      <!-- Tarefas -->
       <div class="section">
         <div class="sec-head">
           <h2><span class="accent">▸</span> EM CAMPO HOJE</h2>
@@ -62,11 +78,15 @@
         <button class="more" id="moreBtn" style="display:none;"></button>
       </div>
 
+      <!-- Resumo do dia (aparece à noite) -->
+      <div id="dayResume" style="display:none;"></div>
+
+      <!-- Adicionar -->
       <div class="section">
         <div class="sec-head"><h2><span class="accent">+</span> ESCALAR</h2></div>
         <div class="tabs">
-          <button class="tab active" data-mode="task" id="tabTask">Tarefa do dia</button>
-          <button class="tab" data-mode="habit" id="tabHabit">Hábito diário</button>
+          <button class="tab active" data-mode="task">Tarefa do dia</button>
+          <button class="tab" data-mode="habit">Hábito diário</button>
         </div>
         <div class="addbar">
           <input id="addInput" placeholder="Ex: Emitir relatório semanal" maxlength="80">
@@ -82,12 +102,14 @@
           <h2><span class="accent">⛪</span> LITURGIA DE HOJE</h2>
           <button class="mini-btn ai-btn" id="loadReadingBtn">✨ GERAR</button>
         </div>
-        <div id="readingContent" class="reading-box"><div class="empty small">Toque em <b>✨ GERAR</b> pra buscar a primeira leitura, evangelho e reflexão do dia.</div></div>
+        <div id="readingContent" class="reading-box">
+          <div class="empty small">Toque em <b>✨ GERAR</b> pra buscar a primeira leitura, evangelho e reflexão do dia.</div>
+        </div>
       </div>
 
       <div class="section">
         <div class="sec-head"><h2><span class="accent">✍️</span> SUA REFLEXÃO</h2></div>
-        <textarea id="reflectInput" placeholder="O que ficou pra você hoje? Escreve livre, sem pressão. Vai virar matéria-prima das cartas do Frei."></textarea>
+        <textarea id="reflectInput" placeholder="O que ficou pra você hoje? Escreve livre, sem pressão."></textarea>
         <div class="row">
           <div class="hint small" id="todayReflectStatus"></div>
           <button class="btn" id="saveReflectBtn">SALVAR</button>
@@ -99,8 +121,10 @@
           <h2><span class="accent">💌</span> CARTA DO FREI · SEMANAL</h2>
           <button class="mini-btn ai-btn" id="weekCardBtn">✨ GERAR</button>
         </div>
-        <div class="hint" id="intentionBox"></div>
-        <div id="weekCard" class="card-letter"><div class="empty small">Gere uma carta semanal a partir das suas reflexões.</div></div>
+        <div class="hint small" id="intentionBox"></div>
+        <div id="weekCard" class="card-letter">
+          <div class="empty small">Gere uma carta semanal a partir das suas reflexões.</div>
+        </div>
       </div>
 
       <div class="section">
@@ -116,7 +140,15 @@
           <h2><span class="accent">🏆</span> CARTA DO MÊS</h2>
           <button class="mini-btn ai-btn" id="monthCardBtn">✨ GERAR</button>
         </div>
-        <div id="monthCard" class="card-letter"><div class="empty small">A carta lê toda sua evolução do mês — tarefas, foco, sequências, reflexões, troféus — e devolve um balanço com intenção pro próximo mês.</div></div>
+        <div id="monthCard" class="card-letter">
+          <div class="empty small">A carta lê toda sua evolução do mês e devolve um balanço com intenção pro próximo.</div>
+        </div>
+      </div>
+
+      <!-- Próximos troféus -->
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">🎯</span> PRÓXIMAS CONQUISTAS</h2></div>
+        <div id="nextTrophies"></div>
       </div>
 
       <div class="section">
@@ -146,6 +178,13 @@
         <div class="duel-bar"><div class="duel-fill" id="duelFill"></div></div>
         <div class="duel-status" id="duelStatus">—</div>
       </div>
+
+      <!-- Evolução do jogador na Liga -->
+      <div class="section">
+        <div class="sec-head"><h2><span class="accent">📈</span> CARREIRA DO JOGADOR</h2></div>
+        <div class="career-history" id="careerHistory"></div>
+      </div>
+
       <div class="section">
         <div class="sec-head"><h2><span class="accent">▸</span> RECORDES</h2></div>
         <div class="records" id="records"></div>
@@ -165,7 +204,6 @@
         </div>
         <p class="hint small">Planner de conteúdo. Toque num dia pra escrever a ideia ou marcar o post executado.</p>
       </div>
-
       <div class="section">
         <div class="cal-head">
           <button class="cal-nav" id="calPrev">‹</button>
@@ -177,16 +215,13 @@
         </div>
         <div class="cal-grid" id="calGrid"></div>
       </div>
-
       <div class="section">
         <button class="big-ai-btn" id="ideasBtn">✨ ME DÊ IDEIAS DE CONTEÚDO</button>
         <div id="ideasOutput"></div>
       </div>
     </div>
 
-    <div class="foot">
-      <b>FOCO ARENA</b> · v2.0 central de operações
-    </div>
+    <div class="foot"><b>FOCO ARENA</b> · v2.1</div>
   </div>
 
   <!-- Bottom nav -->
@@ -198,44 +233,28 @@
     <button class="bnav-btn" data-view="ianaobra"><span>🧱</span><b>Obra</b></button>
   </nav>
 
-  <!-- ============ MODO AGORA (foco) ============ -->
-  <div class="focus" id="focus">
-    <button class="focus-close" id="focusClose">✕</button>
-    <div class="focus-task" id="focusTask">—</div>
-    <div class="focus-stage" id="focusStage">Compromisso de 5 minutos</div>
-    <div class="ring-wrap">
-      <svg class="ring" viewBox="0 0 240 240">
-        <circle cx="120" cy="120" r="108" class="ring-bg"/>
-        <circle cx="120" cy="120" r="108" class="ring-fg" id="ringFg"/>
-      </svg>
-      <div class="ring-time" id="ringTime">05:00</div>
-    </div>
-    <div class="focus-actions" id="focusActions"></div>
-    <div class="focus-hint" id="focusHint">A única missão é começar. Vai, 5 minutos.</div>
-  </div>
-
   <!-- Modal de sync -->
   <div class="overlay" id="overlay">
     <div class="modal">
       <h3>🔗 Sincronização</h3>
-      <p>Este é o <b>código do seu time</b>. Abra o app em outro aparelho e cole este código lá para ver os mesmos dados.</p>
+      <p>Este é o <b>código do seu time</b>. Abra o app em outro aparelho e cole este código lá.</p>
       <div class="codebox"><code id="myCode">—</code><button class="copybtn" id="copyBtn">Copiar</button></div>
-      <label>Entrar com um código de outro aparelho</label>
+      <label>Entrar com código de outro aparelho</label>
       <input id="codeInput" placeholder="ARENA-XXXX-XXXX" autocapitalize="characters">
       <div class="modal-actions">
         <button class="m-link" id="linkBtn">CONECTAR</button>
         <button class="m-close" id="closeBtn">FECHAR</button>
       </div>
-      <div class="note" id="syncNote">Guarde seu código num lugar seguro: quem tiver ele acessa seus dados.</div>
+      <div class="note" id="syncNote">Guarde seu código num lugar seguro.</div>
     </div>
   </div>
 
-  <!-- Modal genérico (editor de dia da Obra, config do canal, etc.) -->
+  <!-- Modal genérico -->
   <div class="overlay" id="formOverlay">
     <div class="modal" id="formModal"></div>
   </div>
 
-  <!-- Modal de loading (durante chamadas à IA) -->
+  <!-- Loading overlay -->
   <div class="overlay" id="loadingOverlay">
     <div class="modal loading-modal">
       <div class="spinner"></div>
@@ -244,9 +263,18 @@
     </div>
   </div>
 
+  <!-- Toast de level up (especial) -->
+  <div class="levelup-overlay" id="levelupOverlay" style="display:none;">
+    <div class="levelup-box">
+      <div class="levelup-avatar" id="levelupAvatar"></div>
+      <div class="levelup-title">EVOLUÇÃO!</div>
+      <div class="levelup-career" id="levelupCareer"></div>
+      <button class="btn" id="levelupClose">BORA! ⚽</button>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>

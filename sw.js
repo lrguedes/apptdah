@@ -1,5 +1,5 @@
 // FOCO ARENA service worker — v2 (Etapas 1-5 completas)
-const CACHE = 'foco-arena-v8';
+const CACHE = 'foco-arena-v9';
 const SHELL = ['./','./index.html','./styles.css','./app.js','./config.js',
   './manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/favicon.png'];
 

@@ -36,7 +36,6 @@
         </div>
         <div class="streak"><span class="flame">🔥</span><b id="streakNum">0</b><span>seq.</span></div>
       </div>
-      <!-- Modo Corintiano badge -->
       <div class="challenge-banner" id="challengeBanner" style="display:none;">
         <div class="ch-label">🏟️ DESAFIO DA RODADA</div>
         <div class="ch-name" id="challengeName"></div>
@@ -53,9 +52,7 @@
 
     <!-- Botão do Técnico (domingo à noite) -->
     <div id="tecnicoBtn" style="display:none;">
-      <button class="tecnico-btn" id="openTecnico">
-        🧠 REUNIÃO COM O TÉCNICO · domingo é hora de rever a semana
-      </button>
+      <button class="tecnico-btn" id="openTecnico">🧠 REUNIÃO COM O TÉCNICO · domingo é hora de rever a semana</button>
     </div>
 
     <!-- ======== VIEW: HOJE ======== -->
@@ -68,9 +65,9 @@
           <span class="pai-icon">👨‍👧</span>
           <div>
             <div class="pai-title">MODO PAI · Maria Clara</div>
-            <div class="pai-sub">17h–19h · tempo de presença</div>
+            <div class="pai-sub" id="paiSub">17h–19h · tempo de presença</div>
           </div>
-          <div id="paiMemCount" class="pai-mem"></div>
+          <div id="paiStreak" class="pai-streak"></div>
         </div>
         <div class="pai-actions">
           <button class="btn" id="markPaiBtn">✓ Fui presente hoje</button>
@@ -120,31 +117,39 @@
 
     <!-- ======== VIEW: FÉ ======== -->
     <div class="view" id="view-fe">
+      <!-- Versículo do dia -->
       <div class="section">
-        <div class="sec-head">
-          <h2><span class="accent">⛪</span> LITURGIA DE HOJE</h2>
-          <button class="mini-btn ai-btn" id="loadReadingBtn">✨ GERAR</button>
-        </div>
-        <div id="readingContent" class="reading-box">
-          <div class="empty small">Toque em <b>✨ GERAR</b> pra buscar a leitura e reflexão do dia.</div>
+        <div class="sec-head"><h2><span class="accent">📖</span> VERSÍCULO DO DIA</h2></div>
+        <div class="versiculo-box">
+          <textarea id="versiculoInput" placeholder="Cole aqui o versículo que encontrou hoje na sua pesquisa..."></textarea>
+          <div class="row">
+            <div class="hint small" id="versiculoStatus"></div>
+            <button class="btn" id="saveVersiculoBtn">SALVAR</button>
+          </div>
         </div>
       </div>
+
+      <!-- Reflexão -->
       <div class="section">
         <div class="sec-head"><h2><span class="accent">✍️</span> SUA REFLEXÃO</h2></div>
-        <textarea id="reflectInput" placeholder="O que ficou pra você hoje?"></textarea>
+        <textarea id="reflectInput" placeholder="O que ficou pra você hoje? Escreve livre, sem pressão."></textarea>
         <div class="row">
           <div class="hint small" id="todayReflectStatus"></div>
           <button class="btn" id="saveReflectBtn">SALVAR</button>
         </div>
       </div>
+
+      <!-- Carta semanal -->
       <div class="section">
         <div class="sec-head">
           <h2><span class="accent">💌</span> CARTA DO FREI · SEMANAL</h2>
           <button class="mini-btn ai-btn" id="weekCardBtn">✨ GERAR</button>
         </div>
         <div class="hint small" id="intentionBox"></div>
-        <div id="weekCard" class="card-letter"><div class="empty small">Gere uma carta semanal a partir das suas reflexões.</div></div>
+        <div id="weekCard" class="card-letter"><div class="empty small">Gere uma carta semanal a partir das suas reflexões e versículos.</div></div>
       </div>
+
+      <!-- Reflexões recentes (expansíveis) -->
       <div class="section">
         <div class="sec-head"><h2><span class="accent">📜</span> REFLEXÕES RECENTES</h2></div>
         <div id="reflectionsList"></div>
@@ -159,11 +164,6 @@
           <button class="mini-btn ai-btn" id="monthCardBtn">✨ GERAR</button>
         </div>
         <div id="monthCard" class="card-letter"><div class="empty small">Balanço completo do mês com intenção pro próximo.</div></div>
-      </div>
-      <!-- Memórias com Maria Clara -->
-      <div class="section">
-        <div class="sec-head"><h2><span class="accent">👨‍👧</span> MEMÓRIAS COM MARIA CLARA</h2></div>
-        <div id="memoriesGrid" class="memories-grid"></div>
       </div>
       <div class="section">
         <div class="sec-head"><h2><span class="accent">🎯</span> PRÓXIMAS CONQUISTAS</h2></div>
@@ -183,21 +183,13 @@
       <div class="section">
         <div class="sec-head"><h2><span class="accent">▸</span> DUELO DA SEMANA</h2></div>
         <div class="duel" id="duel">
-          <div class="duel-side">
-            <div class="duel-label">VOCÊ</div>
-            <div class="duel-score" id="myScore">0</div>
-          </div>
+          <div class="duel-side"><div class="duel-label">VOCÊ</div><div class="duel-score" id="myScore">0</div></div>
           <div class="duel-vs">VS</div>
-          <div class="duel-side rival">
-            <div class="duel-label">RIVAL 👻</div>
-            <div class="duel-score" id="rivalScore">0</div>
-          </div>
+          <div class="duel-side rival"><div class="duel-label">RIVAL 👻</div><div class="duel-score" id="rivalScore">0</div></div>
         </div>
         <div class="duel-bar"><div class="duel-fill" id="duelFill"></div></div>
         <div class="duel-status" id="duelStatus">—</div>
       </div>
-
-      <!-- Linha do Tempo -->
       <div class="section">
         <div class="sec-head">
           <h2><span class="accent">📈</span> LINHA DO TEMPO · 30 DIAS</h2>
@@ -206,13 +198,10 @@
         <div class="timeline-chart" id="timelineChart"></div>
         <div id="insightsOutput"></div>
       </div>
-
-      <!-- Carreira -->
       <div class="section">
         <div class="sec-head"><h2><span class="accent">📋</span> CARREIRA DO JOGADOR</h2></div>
         <div class="career-history" id="careerHistory"></div>
       </div>
-
       <div class="section">
         <div class="sec-head"><h2><span class="accent">▸</span> RECORDES</h2></div>
         <div class="records" id="records"></div>
@@ -230,8 +219,10 @@
           <h2><span class="accent">🧱</span> IANAOBRA</h2>
           <button class="mini-btn" id="obraConfigBtn">⚙️</button>
         </div>
-        <p class="hint small">Planner de conteúdo. Toque num dia pra escrever a ideia ou marcar o post executado.</p>
+        <p class="hint small">Planner de conteúdo. Toque num dia pra escrever a ideia ou registrar o post com métricas.</p>
       </div>
+      <!-- Campeões do mês -->
+      <div id="monthChampions" class="month-champions" style="display:none;"></div>
       <div class="section">
         <div class="cal-head">
           <button class="cal-nav" id="calPrev">‹</button>
@@ -249,7 +240,7 @@
       </div>
     </div>
 
-    <div class="foot"><b>FOCO ARENA</b> · v2.2</div>
+    <div class="foot"><b>FOCO ARENA</b> · v2.3</div>
   </div>
 
   <!-- Nav -->
@@ -261,15 +252,13 @@
     <button class="bnav-btn" data-view="ianaobra"><span>🧱</span><b>Obra</b></button>
   </nav>
 
-  <!-- Modal Reunião com o Técnico -->
+  <!-- Modal Técnico -->
   <div class="overlay" id="tecnicoOverlay">
     <div class="modal modal-wide">
       <div class="tecnico-header">
         <span class="tecnico-ico">🧠</span>
-        <div>
-          <h3 style="margin:0">REUNIÃO COM O TÉCNICO</h3>
-          <div style="font-size:12px;color:var(--muted);font-family:'Rajdhani';font-weight:600">Análise da sua semana · domingo à noite</div>
-        </div>
+        <div><h3 style="margin:0">REUNIÃO COM O TÉCNICO</h3>
+          <div style="font-size:12px;color:var(--muted);font-family:'Rajdhani';font-weight:600">Análise da semana · domingo à noite</div></div>
       </div>
       <div id="tecnicoChat" class="tecnico-chat"></div>
       <div id="tecnicoInputArea" style="display:none;">
@@ -286,6 +275,11 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Modal Obra (adicionar post com métricas) -->
+  <div class="overlay" id="obraPostOverlay">
+    <div class="modal" id="obraPostModal"></div>
   </div>
 
   <!-- Modal sync -->

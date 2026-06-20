@@ -1,5 +1,5 @@
 /* ============================================================
-   FOCO ARENA v2.2
+   FOCO ARENA v2.3
    ============================================================ */
 
 /* ── CARREIRA ── */
@@ -16,46 +16,69 @@ const CAREER=[
   {id:'ballon',     name:"BALLON D'OR 🏆",   club:'Melhor do mundo',             need:3200},
 ];
 
-/* ── DESAFIOS (Modo Corintiano) ── */
+/* ── DESAFIOS ── */
 const CHALLENGES=[
-  {id:'campo_limpo',  name:'Semana Campo Limpo',    desc:'Bata o mínimo todos os dias da semana',       goal:7,  type:'streak_days', xpBonus:50},
-  {id:'contra_ataque',name:'Semana do Contra-Ataque',desc:'Resgate 2 tarefas esquecidas (+5 dias)',      goal:2,  type:'rescues',      xpBonus:60},
-  {id:'camisa10',     name:'Camisa 10 da Obra',     desc:'Faça 1 post no IAnaObra todo dia útil (5)',   goal:5,  type:'obra_posts',    xpBonus:70},
-  {id:'foco_total',   name:'Semana Foco Total',     desc:'Complete 5 blocos de foco esta semana',       goal:5,  type:'focos',         xpBonus:55},
-  {id:'sem_atraso',   name:'Sem Atrasos',           desc:'Zero tarefas atrasadas ao fim da semana',     goal:1,  type:'no_decay',      xpBonus:45},
-  {id:'hat_trick',    name:'Hat-Trick da Semana',   desc:'Complete 3 tarefas no mesmo dia',             goal:3,  type:'same_day',      xpBonus:40},
-  {id:'rotina_pai',   name:'Modo Pai em Campo',     desc:'Registre presença com Maria Clara 3x',        goal:3,  type:'pai_days',      xpBonus:65},
-  {id:'missa_digital',name:'Missa Digital Diária',  desc:'Gere a leitura do dia e escreva reflexão',   goal:1,  type:'reflection',    xpBonus:50},
+  {id:'campo_limpo',  name:'Semana Campo Limpo',     desc:'Bata o mínimo todos os dias',         goal:7,  type:'streak_days', xpBonus:50},
+  {id:'contra_ataque',name:'Semana do Contra-Ataque',desc:'Resgate 2 tarefas esquecidas (+5d)',  goal:2,  type:'rescues',      xpBonus:60},
+  {id:'camisa10',     name:'Camisa 10 da Obra',      desc:'5 posts no IAnaObra esta semana',     goal:5,  type:'obra_posts',   xpBonus:70},
+  {id:'foco_total',   name:'Semana Foco Total',      desc:'Complete 5 blocos de foco',           goal:5,  type:'focos',        xpBonus:55},
+  {id:'sem_atraso',   name:'Sem Atrasos',            desc:'Zero tarefas atrasadas no fim',       goal:1,  type:'no_decay',     xpBonus:45},
+  {id:'hat_trick',    name:'Hat-Trick da Semana',    desc:'Complete 3 tarefas no mesmo dia',     goal:3,  type:'same_day',     xpBonus:40},
+  {id:'rotina_pai',   name:'Modo Pai em Campo',      desc:'Registre presença com M.Clara 3x',    goal:3,  type:'pai_days',     xpBonus:65},
+  {id:'missa_digital',name:'Semana da Reflexão',     desc:'Escreva reflexão 3 vezes',            goal:3,  type:'reflection',   xpBonus:50},
 ];
 
 /* ── TROFÉUS ── */
 const TROPHY_DEFS=[
-  {id:'first_task', icon:'🎯',name:'Primeira Jogada',   desc:'Completou sua primeira tarefa',         check:s=>s.tasks.filter(t=>t.done).length>=1},
-  {id:'streak_3',   icon:'🔥',name:'Triênio',           desc:'3 dias de sequência',                   check:s=>s.streak>=3},
-  {id:'streak_7',   icon:'🏅',name:'Semana Invicta',    desc:'7 dias consecutivos',                   check:s=>s.streak>=7},
-  {id:'streak_14',  icon:'🥇',name:'Quinzena de Ferro', desc:'14 dias sem parar',                     check:s=>s.streak>=14},
-  {id:'streak_30',  icon:'👑',name:'Mês Perfeito',      desc:'30 dias consecutivos',                  check:s=>s.streak>=30},
-  {id:'foco_1',     icon:'⚡',name:'Primeiro Foco',     desc:'1 bloco Pomodoro concluído',            check:s=>(s.records.totalFocos||0)>=1},
-  {id:'foco_10',    icon:'🎮',name:'Dez no Foco',       desc:'10 blocos de foco',                     check:s=>(s.records.totalFocos||0)>=10},
-  {id:'foco_50',    icon:'🚀',name:'Cinquenta Focos',   desc:'50 blocos de foco',                     check:s=>(s.records.totalFocos||0)>=50},
-  {id:'xp_100',     icon:'💯',name:'Cem Pontos',        desc:'100 XP lifetime',                       check:s=>(s.totalXpEver||0)>=100},
-  {id:'xp_500',     icon:'💎',name:'Quinhentos',        desc:'500 XP lifetime',                       check:s=>(s.totalXpEver||0)>=500},
-  {id:'xp_1000',    icon:'🌟',name:'Milhar',            desc:'1000 XP lifetime',                      check:s=>(s.totalXpEver||0)>=1000},
-  {id:'rival_win',  icon:'👻',name:'Caça-Fantasma',     desc:'Venceu o Rival Fantasma',               check:s=>(s.records.rivalWins||0)>=1},
-  {id:'rival_3',    icon:'🏆',name:'Exterminador',      desc:'3 vitórias contra o Rival',             check:s=>(s.records.rivalWins||0)>=3},
-  {id:'reflect_1',  icon:'✍️',name:'Primeira Reflexão', desc:'Primeira reflexão de fé',               check:s=>(s.reflections||[]).length>=1},
-  {id:'reflect_7',  icon:'📖',name:'Diário Fiel',       desc:'7 reflexões escritas',                  check:s=>(s.reflections||[]).length>=7},
-  {id:'obra_5',     icon:'📸',name:'Criador',           desc:'5 posts no IAnaObra',                   check:s=>Object.keys(s.obraPosts||{}).length>=5},
-  {id:'obra_20',    icon:'📲',name:'Influência em Obra',desc:'20 posts no calendário',                check:s=>Object.keys(s.obraPosts||{}).length>=20},
-  {id:'rescue_1',   icon:'🧹',name:'Limpeza Geral',     desc:'Resgatou uma tarefa abandonada',        check:s=>(s.records.rescues||0)>=1},
-  {id:'rescue_5',   icon:'♻️',name:'Rei do Resgate',    desc:'5 tarefas resgatadas',                  check:s=>(s.records.rescues||0)>=5},
-  {id:'daily_read', icon:'⛪',name:'Missa Digital',      desc:'Gerou a leitura do dia',               check:s=>!!(s.lastReading)},
-  {id:'week_card',  icon:'💌',name:'Carta do Frei',     desc:'Gerou a carta semanal',                 check:s=>!!(s.lastWeekCard)},
-  {id:'month_card', icon:'📜',name:'Carta do Mês',      desc:'Gerou a carta mensal',                  check:s=>!!(s.lastMonthCard)},
-  {id:'pai_10',     icon:'👨‍👧',name:'Pai Presente',     desc:'10 dias registrados com Maria Clara',  check:s=>(s.paiDates||[]).length>=10},
-  {id:'challenge_1',icon:'🏟️',name:'Corintiano de Raiz',desc:'Completou o primeiro desafio da rodada',check:s=>(s.challengesWon||0)>=1},
-  {id:'challenge_5',icon:'🔱',name:'Lenda do Parque',  desc:'5 desafios de rodada vencidos',         check:s=>(s.challengesWon||0)>=5},
-  {id:'ballon_dor', icon:'🏅',name:"Ballon D'Or",        desc:"Atingiu o nível Ballon D'Or",          check:s=>(s.totalXpEver||0)>=3200},
+  // conquistas básicas
+  {id:'first_task',   icon:'🎯', name:'Primeira Jogada',    desc:'Completou sua primeira tarefa',         check:s=>s.tasks.filter(t=>t.done).length>=1},
+  // streak
+  {id:'streak_3',     icon:'🔥', name:'Triênio',            desc:'3 dias de sequência',                   check:s=>s.streak>=3},
+  {id:'streak_5',     icon:'⚡', name:'Semana Sólida',      desc:'5 dias consecutivos',                   check:s=>s.streak>=5},
+  {id:'streak_7',     icon:'🏅', name:'Semana Invicta',     desc:'7 dias consecutivos',                   check:s=>s.streak>=7},
+  {id:'streak_10',    icon:'💥', name:'Dez em Campo',       desc:'10 dias sem parar',                     check:s=>s.streak>=10},
+  {id:'streak_14',    icon:'🥇', name:'Quinzena de Ferro',  desc:'14 dias consecutivos',                  check:s=>s.streak>=14},
+  {id:'streak_21',    icon:'🔱', name:'Invicto do Mês',     desc:'21 dias consecutivos',                  check:s=>s.streak>=21},
+  {id:'streak_30',    icon:'👑', name:'Mês Perfeito',       desc:'30 dias consecutivos',                  check:s=>s.streak>=30},
+  // XP
+  {id:'xp_100',       icon:'💯', name:'Cem Pontos',         desc:'100 XP lifetime',                       check:s=>(s.totalXpEver||0)>=100},
+  {id:'xp_500',       icon:'💎', name:'Quinhentos',         desc:'500 XP lifetime',                       check:s=>(s.totalXpEver||0)>=500},
+  {id:'xp_1000',      icon:'🌟', name:'Milhar',             desc:'1000 XP lifetime',                      check:s=>(s.totalXpEver||0)>=1000},
+  {id:'xp_2000',      icon:'🚀', name:'Dois Mil',           desc:'2000 XP lifetime',                      check:s=>(s.totalXpEver||0)>=2000},
+  // rival
+  {id:'rival_win',    icon:'👻', name:'Caça-Fantasma',      desc:'Venceu o Rival Fantasma uma vez',       check:s=>(s.records.rivalWins||0)>=1},
+  {id:'rival_3',      icon:'🏆', name:'Exterminador',       desc:'3 vitórias contra o Rival',             check:s=>(s.records.rivalWins||0)>=3},
+  {id:'rival_series', icon:'🔥', name:'Série Invicta',      desc:'3 semanas seguidas vencendo o Rival',   check:s=>(s.records.rivalWins||0)>=3},
+  // reflexão e fé
+  {id:'reflect_1',    icon:'✍️', name:'Primeira Reflexão',  desc:'Primeira reflexão de fé',               check:s=>(s.reflections||[]).length>=1},
+  {id:'reflect_3',    icon:'📝', name:'Semana Reflexiva',   desc:'3 reflexões escritas',                  check:s=>(s.reflections||[]).length>=3},
+  {id:'reflect_7',    icon:'📖', name:'Diário Fiel',        desc:'7 reflexões escritas',                  check:s=>(s.reflections||[]).length>=7},
+  {id:'reflect_30',   icon:'🙏', name:'Trimestre de Fé',    desc:'30 reflexões escritas',                 check:s=>(s.reflections||[]).length>=30},
+  {id:'versiculo_1',  icon:'✨', name:'Versículo na Alma',  desc:'Primeiro versículo salvo',              check:s=>!!(s.versiculos&&s.versiculos.length>0)},
+  {id:'week_card',    icon:'💌', name:'Carta do Frei',      desc:'Gerou a carta semanal',                 check:s=>!!(s.lastWeekCard)},
+  {id:'month_card',   icon:'📜', name:'Carta do Mês',       desc:'Gerou a carta mensal',                  check:s=>!!(s.lastMonthCard)},
+  // IAnaObra
+  {id:'obra_5',       icon:'📸', name:'Criador',            desc:'5 posts no IAnaObra',                   check:s=>Object.keys(s.obraPosts||{}).length>=5},
+  {id:'obra_20',      icon:'📲', name:'Influência em Obra', desc:'20 posts no calendário',                check:s=>Object.keys(s.obraPosts||{}).length>=20},
+  {id:'obra_metrica', icon:'📊', name:'Primeira Métrica',   desc:'Primeiro post com dados preenchidos',   check:s=>Object.values(s.obraPosts||{}).some(p=>p.likes||p.comments||p.saves||p.shares)},
+  {id:'obra_analista',icon:'🔬', name:'Analista de Conteúdo',desc:'5 posts com métricas registradas',    check:s=>Object.values(s.obraPosts||{}).filter(p=>p.likes||p.comments||p.saves||p.shares).length>=5},
+  // resgate
+  {id:'rescue_1',     icon:'🧹', name:'Limpeza Geral',      desc:'Resgatou uma tarefa abandonada',        check:s=>(s.records.rescues||0)>=1},
+  {id:'rescue_5',     icon:'♻️', name:'Rei do Resgate',     desc:'5 tarefas resgatadas',                  check:s=>(s.records.rescues||0)>=5},
+  // pai
+  {id:'pai_1',        icon:'💛', name:'Primeira Memória',   desc:'Primeiro dia registrado com M.Clara',   check:s=>(s.paiDates||[]).length>=1},
+  {id:'pai_7',        icon:'👨‍👧', name:'Semana com a Menina',desc:'7 dias com Maria Clara',              check:s=>(s.paiDates||[]).length>=7},
+  {id:'pai_20',       icon:'❤️', name:'Rotina do Pai',      desc:'20 dias de presença registrados',       check:s=>(s.paiDates||[]).length>=20},
+  // desafios
+  {id:'challenge_1',  icon:'🏟️', name:'Corintiano de Raiz', desc:'Completou o primeiro desafio da rodada',check:s=>(s.challengesWon||0)>=1},
+  {id:'challenge_5',  icon:'🔱', name:'Lenda do Parque',    desc:'5 desafios de rodada vencidos',         check:s=>(s.challengesWon||0)>=5},
+  // especiais
+  {id:'madrugador',   icon:'🌅', name:'Madrugador',         desc:'Completou uma tarefa antes das 8h',     check:()=>false},
+  {id:'coruja',       icon:'🦉', name:'Coruja',             desc:'Completou uma tarefa depois das 22h',   check:()=>false},
+  {id:'domingo_prod', icon:'☀️', name:'Domingo Produtivo',  desc:'Bateu o mínimo num domingo',            check:()=>false},
+  {id:'fe_e_foco',    icon:'⚖️', name:'Fé e Foco',          desc:'Reflexão + 3 tarefas no mesmo dia',     check:()=>false},
+  {id:'artilheiro',   icon:'🥅', name:'Artilheiro do Mês',  desc:'Seu maior XP num único mês',            check:()=>false},
+  {id:'ballon_dor',   icon:'🏅', name:"Ballon D'Or",         desc:"Atingiu o nível Ballon D'Or",          check:s=>(s.totalXpEver||0)>=3200},
 ];
 
 const MOTIV_MSGS=[
@@ -83,10 +106,10 @@ let S={
   records:{bestStreak:0,bestWeekXP:0,mostFocosInDay:0,totalFocos:0,rivalWins:0,rescues:0},
   lastSettledWeek:null,careerHistory:[],
   trophies:{},challengesWon:0,
-  reflections:[],weekIntention:'',
-  lastWeekCard:null,lastMonthCard:null,lastReading:null,
+  reflections:[],versiculos:[],weekIntention:'',
+  lastWeekCard:null,lastMonthCard:null,
   matchesCache:{date:'',data:[]},
-  paiDates:[],
+  paiDates:[],paiStreak:0,
   currentChallenge:null,challengeStartWeek:null,challengeProgress:{},
   tecnicoSessions:[],
   obraPosts:{},obraConfig:{about:'',lastPosts:''},
@@ -129,40 +152,30 @@ function fmtDate(k){const d=dateFromKey(k);return pad(d.getDate())+'/'+pad(d.get
 function curMonthKey(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1);}
 function monthName(y,m){return new Date(y,m,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});}
 
-/* ── AVATAR SVG ── */
+/* ── AVATAR ── */
 function buildAvatar(careerId){
   const accent=careerId==='corinthians'?'#111':careerId==='selecao'?'#007a3d':
     careerId==='porto'?'#003087':careerId==='city'?'#6cabdd':
     careerId==='madrid'?'#febe10':careerId==='ballon'?'#ffe600':'#00e5ff';
   return `<svg viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
     <rect x="11" y="1" width="10" height="10" fill="#f5d5a8"/>
-    <rect x="10" y="3" width="1" height="7" fill="#f5d5a8"/>
-    <rect x="21" y="3" width="1" height="7" fill="#f5d5a8"/>
+    <rect x="10" y="3" width="1" height="7" fill="#f5d5a8"/><rect x="21" y="3" width="1" height="7" fill="#f5d5a8"/>
     <rect x="11" y="1" width="10" height="2" fill="#4a3000"/>
-    <rect x="10" y="3" width="2" height="1" fill="#4a3000"/>
-    <rect x="13" y="5" width="2" height="2" fill="#222"/>
-    <rect x="17" y="5" width="2" height="2" fill="#222"/>
+    <rect x="13" y="5" width="2" height="2" fill="#222"/><rect x="17" y="5" width="2" height="2" fill="#222"/>
     <rect x="14" y="8" width="4" height="1" fill="#c0806a"/>
     <rect x="14" y="11" width="4" height="2" fill="#f5d5a8"/>
-    <rect x="9"  y="13" width="14" height="11" fill="#e8f4f8"/>
-    <rect x="10" y="13" width="2"  height="11" fill="${accent}" opacity="0.7"/>
-    <rect x="14" y="13" width="2"  height="11" fill="${accent}" opacity="0.7"/>
-    <rect x="18" y="13" width="2"  height="11" fill="${accent}" opacity="0.7"/>
-    <rect x="5"  y="13" width="4" height="7" fill="#e8f4f8"/>
-    <rect x="23" y="13" width="4" height="7" fill="#e8f4f8"/>
-    <rect x="5"  y="20" width="4" height="2" fill="${accent}" opacity="0.8"/>
-    <rect x="23" y="20" width="4" height="2" fill="${accent}" opacity="0.8"/>
-    <rect x="5"  y="22" width="4" height="2" fill="#f5d5a8"/>
-    <rect x="23" y="22" width="4" height="2" fill="#f5d5a8"/>
+    <rect x="9" y="13" width="14" height="11" fill="#e8f4f8"/>
+    <rect x="10" y="13" width="2" height="11" fill="${accent}" opacity="0.7"/>
+    <rect x="14" y="13" width="2" height="11" fill="${accent}" opacity="0.7"/>
+    <rect x="18" y="13" width="2" height="11" fill="${accent}" opacity="0.7"/>
+    <rect x="5" y="13" width="4" height="7" fill="#e8f4f8"/><rect x="23" y="13" width="4" height="7" fill="#e8f4f8"/>
+    <rect x="5" y="20" width="4" height="2" fill="${accent}" opacity="0.8"/><rect x="23" y="20" width="4" height="2" fill="${accent}" opacity="0.8"/>
+    <rect x="5" y="22" width="4" height="2" fill="#f5d5a8"/><rect x="23" y="22" width="4" height="2" fill="#f5d5a8"/>
     <rect x="10" y="24" width="12" height="6" fill="#111"/>
-    <rect x="10" y="30" width="5" height="6" fill="#e8f4f8"/>
-    <rect x="17" y="30" width="5" height="6" fill="#e8f4f8"/>
-    <rect x="10" y="32" width="5" height="1" fill="${accent}" opacity="0.6"/>
-    <rect x="17" y="32" width="5" height="1" fill="${accent}" opacity="0.6"/>
-    <rect x="9"  y="36" width="6" height="3" fill="#222"/>
-    <rect x="17" y="36" width="6" height="3" fill="#222"/>
-    <rect x="9"  y="38" width="7" height="1" fill="#222"/>
-    <rect x="16" y="38" width="7" height="1" fill="#222"/>
+    <rect x="10" y="30" width="5" height="6" fill="#e8f4f8"/><rect x="17" y="30" width="5" height="6" fill="#e8f4f8"/>
+    <rect x="10" y="32" width="5" height="1" fill="${accent}" opacity="0.6"/><rect x="17" y="32" width="5" height="1" fill="${accent}" opacity="0.6"/>
+    <rect x="9" y="36" width="6" height="3" fill="#222"/><rect x="17" y="36" width="6" height="3" fill="#222"/>
+    <rect x="9" y="38" width="7" height="1" fill="#222"/><rect x="16" y="38" width="7" height="1" fill="#222"/>
   </svg>`;
 }
 
@@ -185,9 +198,8 @@ function rollover(){
     S.xpMonth=0;
   }
   S.monthKey=mk;
-  // novo desafio semanal se semana mudou
-  if(S.challengeStartWeek!==wk){
-    // verifica se completou o desafio anterior
+  const wk2=weekKeyOf();
+  if(S.challengeStartWeek!==wk2){
     if(S.currentChallenge&&S.challengeStartWeek){
       const ch=CHALLENGES.find(c=>c.id===S.currentChallenge.id);
       if(ch&&challengeCurrentProgress(ch)>=ch.goal){
@@ -196,31 +208,39 @@ function rollover(){
         toast('DESAFIO VENCIDO! 🏟️','+'+ch.xpBonus+' pts de bônus');
       }
     }
-    // sorteia novo desafio
-    const idx=Math.floor((new Date(dateFromKey(wk)).getTime()/86400000/7))%CHALLENGES.length;
-    S.currentChallenge=CHALLENGES[idx];
-    S.challengeStartWeek=wk;
-    S.challengeProgress={rescues_start:S.records.rescues||0,focos_start:S.records.totalFocos||0,obra_start:Object.keys(S.obraPosts||{}).length,pai_start:(S.paiDates||[]).length};
+    const idx=Math.floor((new Date(dateFromKey(wk2)).getTime()/86400000/7))%CHALLENGES.length;
+    S.currentChallenge=CHALLENGES[idx];S.challengeStartWeek=wk2;
+    S.challengeProgress={rescues_start:S.records.rescues||0,focos_start:S.records.totalFocos||0,
+      pai_start:(S.paiDates||[]).length,refl_start:(S.reflections||[]).length};
   }
+  // sequência do pai
+  recalcPaiStreak();
   settleWeeks();
 }
+function recalcPaiStreak(){
+  const dates=(S.paiDates||[]).slice().sort().reverse();
+  if(!dates.length){S.paiStreak=0;return;}
+  let c=1;
+  for(let i=1;i<dates.length;i++){if(daysBetween(dates[i],dates[i-1])===1)c++;else break;}
+  S.paiStreak=c;
+}
+function isWeekendDay(k){const d=dateFromKey(k).getDay();return d===0||d===6;}
 function challengeCurrentProgress(ch){
   if(!ch)return 0;
   const p=S.challengeProgress||{};
   const wk=weekKeyOf();const days=weekDates(weekStartOf(new Date()));
   switch(ch.type){
-    case 'streak_days':return days.filter(d=>S.history[d]&&(S.history[d].count>=(isWeekendDay(d)?1:3)||S.history[d].focos>=1)).length;
+    case 'streak_days':return days.filter(d=>{const h=S.history[d]||{count:0,focos:0};return h.count>=(isWeekendDay(d)?1:3)||h.focos>=1;}).length;
     case 'rescues':return Math.max(0,(S.records.rescues||0)-(p.rescues_start||0));
-    case 'obra_posts':return Math.max(0,Object.keys(S.obraPosts||{}).filter(k=>k>=days[0]&&k<=days[6]).length-(0));
+    case 'obra_posts':return Object.keys(S.obraPosts||{}).filter(k=>k>=days[0]&&k<=days[6]).length;
     case 'focos':return Math.max(0,(S.records.totalFocos||0)-(p.focos_start||0));
-    case 'pai_days':return Math.max(0,(S.paiDates||[]).filter(d=>d>=days[0]&&d<=days[6]).length);
-    case 'reflection':return S.reflections.filter(r=>r.date>=days[0]&&r.date<=days[6]).length>0&&S.lastReading&&S.lastReading.date>=days[0]?1:0;
-    case 'same_day':{const maxDay=days.reduce((m,d)=>Math.max(m,S.history[d]?.count||0),0);return maxDay;}
+    case 'pai_days':return (S.paiDates||[]).filter(d=>d>=days[0]&&d<=days[6]).length;
+    case 'reflection':return (S.reflections||[]).filter(r=>r.date>=days[0]&&r.date<=days[6]).length;
+    case 'same_day':return days.reduce((m,d)=>Math.max(m,S.history[d]?.count||0),0);
     case 'no_decay':return S.tasks.filter(t=>!t.done&&taskAge(t)>=TASK_RESGATE_DAYS).length===0?1:0;
     default:return 0;
   }
 }
-function isWeekendDay(k){const d=dateFromKey(k).getDay();return d===0||d===6;}
 function settleWeeks(){
   const curWk=weekKeyOf();if(S.lastSettledWeek===curWk)return;
   if(S.lastSettledWeek){let cur=new Date(dateFromKey(S.lastSettledWeek));
@@ -229,7 +249,7 @@ function settleWeeks(){
         const lb=new Date(weekStartOf(cur));lb.setDate(lb.getDate()-7);
         const target=Math.max(70,Math.round(weeklyXP(lb)*1.1));const won=sums>=target;
         S.weekly[wkKey]={xp:sums,rival:target,won,settled:true};
-        if(won){S.records.rivalWins=(S.records.rivalWins||0)+1;checkTrophy('rival_win');if(S.records.rivalWins>=3)checkTrophy('rival_3');}
+        if(won){S.records.rivalWins=(S.records.rivalWins||0)+1;checkTrophy('rival_win');if(S.records.rivalWins>=3){checkTrophy('rival_3');checkTrophy('rival_series');}}
         if(sums>(S.records.bestWeekXP||0))S.records.bestWeekXP=sums;}
       cur.setDate(cur.getDate()+7);}}
   S.lastSettledWeek=curWk;
@@ -240,14 +260,24 @@ function registerProgress(type){
   const t=todayKey();if(!S.history[t])S.history[t]={count:0,focos:0,xp:0};
   if(type==='foco'){S.history[t].focos++;S.records.totalFocos=(S.records.totalFocos||0)+1;
     if(S.history[t].focos>(S.records.mostFocosInDay||0))S.records.mostFocosInDay=S.history[t].focos;
-    checkTrophy('foco_1');if(S.records.totalFocos>=10)checkTrophy('foco_10');if(S.records.totalFocos>=50)checkTrophy('foco_50');
-  }else S.history[t].count++;
+  }else{
+    S.history[t].count++;
+    // troféus especiais por horário
+    const h=new Date().getHours();
+    if(h<8)checkTrophy('madrugador');
+    if(h>=22)checkTrophy('coruja');
+    if(isSunday()&&todayMinimumMet())checkTrophy('domingo_prod');
+    // fé e foco
+    const todayRefl=S.reflections.some(r=>r.date===t);
+    if(todayRefl&&S.history[t].count>=3)checkTrophy('fe_e_foco');
+  }
   if(todayMinimumMet()&&S.lastStreakDate!==t){
     S.streak++;if(S.streak>S.bestStreak)S.bestStreak=S.streak;
     if(S.streak>S.records.bestStreak)S.records.bestStreak=S.streak;
     S.lastStreakDate=t;addXP(XP.streakBonus,true);
     setTimeout(()=>toast('SEQUÊNCIA MANTIDA! 🔥','+'+XP.streakBonus+' pts · '+S.streak+' dias invicto'),700);
-    checkTrophy('streak_3');checkTrophy('streak_7');checkTrophy('streak_14');checkTrophy('streak_30');
+    checkTrophy('streak_3');checkTrophy('streak_5');checkTrophy('streak_7');
+    checkTrophy('streak_10');checkTrophy('streak_14');checkTrophy('streak_21');checkTrophy('streak_30');
     setTimeout(renderCampoLimpo,1000);
   }
 }
@@ -263,7 +293,9 @@ function addXP(amount,silent){
   S.history[t].xp=(S.history[t].xp||0)+gained;
   if(surprise)toast(surprise,'+'+gained+' pts');
   if(currentCareer().id!==prevCareer.id)setTimeout(()=>showLevelUp(currentCareer()),800);
-  checkTrophy('xp_100');checkTrophy('xp_500');checkTrophy('xp_1000');checkTrophy('ballon_dor');
+  checkTrophy('xp_100');checkTrophy('xp_500');checkTrophy('xp_1000');checkTrophy('xp_2000');checkTrophy('ballon_dor');
+  // artilheiro do mês
+  if(S.xpMonth>(S.records.bestMonthXP||0)){S.records.bestMonthXP=S.xpMonth;checkTrophy('artilheiro');}
   return{gained,surprise};
 }
 function currentCareer(){let idx=0;for(let i=0;i<CAREER.length;i++)if(S.totalXpEver>=CAREER[i].need)idx=i;return CAREER[idx];}
@@ -283,11 +315,7 @@ function checkTrophy(id){
   toast('TROFÉU DESBLOQUEADO! 🏆',def.icon+' '+def.name);persist();
 }
 function checkAllTrophies(){TROPHY_DEFS.forEach(d=>{if(!S.trophies[d.id]&&d.check&&d.check(S))checkTrophy(d.id);});}
-
-/* ── LIMPEZA ── */
-function pruneOldTasks(){
-  S.tasks=S.tasks.filter(t=>{if(!t.done||!t.doneDate)return true;return daysBetween(t.doneDate,todayKey())<3;});
-}
+function pruneOldTasks(){S.tasks=S.tasks.filter(t=>{if(!t.done||!t.doneDate)return true;return daysBetween(t.doneDate,todayKey())<3;});}
 
 /* ── PERSIST ── */
 function persist(){
@@ -307,11 +335,11 @@ function go(view){
 /* ── HELPERS ── */
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function formatLetter(text){return'<div>'+text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').split('\n').filter(l=>l.trim()).map(l=>'<p>'+esc(l.trim())+'</p>').join('')+'</div>';}
 
 /* ── RENDER MASTER ── */
 function render(){
-  renderHUD();renderContext();
-  renderTecnicoBtn();
+  renderHUD();renderContext();renderTecnicoBtn();
   if(S.view==='hoje'){renderToday();renderMatches();renderDayResume();}
   if(S.view==='fe')renderFe();
   if(S.view==='trofeus')renderTrofeus();
@@ -330,7 +358,6 @@ function renderHUD(){
   else{$('fill').style.width='100%';$('playerXpLabel').textContent="BALLON D'OR CONQUISTADO 🏆";}
   $('escudos').innerHTML='<span class="sh">🛡️</span> '+S.escudos+' escudo'+(S.escudos!==1?'s':'')+' <span style="opacity:.5">(máx '+ESCUDO_CAP+')</span>';
   $('xpMonth').textContent='📅 '+S.xpMonth+' XP';$('lifetime').textContent='⭐ '+S.totalXpEver+' total';
-  // Modo Corintiano
   const ch=S.currentChallenge;const banner=$('challengeBanner');
   if(ch){const prog=challengeCurrentProgress(ch);banner.style.display='block';
     $('challengeName').textContent=ch.name+' — '+ch.desc;
@@ -346,28 +373,27 @@ function renderContext(){
   else{c.classList.add('me');c.querySelector('.ic').textContent='🎮';
     txt.innerHTML='<b>Seu tempo.</b> Hora de descansar e gastar recompensa.';}
 }
-function renderTecnicoBtn(){
-  const h=new Date().getHours();
-  $('tecnicoBtn').style.display=(isSunday()&&h>=18)?'block':'none';
-}
+function renderTecnicoBtn(){$('tecnicoBtn').style.display=(isSunday()&&new Date().getHours()>=18)?'block':'none';}
 
 /* ── HOJE ── */
 function renderToday(){
-  // motivacional
   const h=new Date().getHours();const mb=$('motivBox');
   if(h>=6&&h<22){const msg=MOTIV_MSGS[new Date().getDay()%MOTIV_MSGS.length];
     const total=S.tasks.filter(t=>!t.done).length+S.habits.filter(h=>!(h.doneDates||[]).includes(todayKey())).length;
     mb.innerHTML=`<span class="motiv-tag">HOJE</span>${msg}${total>0?' Você tem <b>'+total+' '+(total===1?'item':'itens')+'</b> na escalação.':''}`;
     mb.classList.add('show');}
   else mb.classList.remove('show');
-  // Modo Pai
-  const h2=new Date().getHours();const paiCard=$('paiCard');
-  if(h2>=17&&h2<21){paiCard.style.display='block';}
-  else paiCard.style.display='none';
-  const todayMarked=(S.paiDates||[]).includes(todayKey());
-  $('markPaiBtn').textContent=todayMarked?'✓ Presença registrada':'✓ Fui presente hoje';
-  $('markPaiBtn').style.opacity=todayMarked?'.6':'1';
-  $('paiMemCount').textContent='👨‍👧 '+(S.paiDates||[]).length+' dias';
+  // Modo Pai (17h–21h)
+  const paiCard=$('paiCard');
+  if(h>=17&&h<21){
+    paiCard.style.display='block';
+    const todayMarked=(S.paiDates||[]).includes(todayKey());
+    $('markPaiBtn').textContent=todayMarked?'✓ Presença registrada':'✓ Fui presente hoje';
+    $('markPaiBtn').style.opacity=todayMarked?'.6':'1';
+    const ps=S.paiStreak||0;
+    $('paiStreak').innerHTML=ps>1?'🔥 '+ps+' dias seguidos':'💛 '+((S.paiDates||[]).length)+' dias total';
+    $('paiSub').textContent=todayMarked?'Presença registrada hoje ✓':'17h–19h · tempo de presença';
+  }else paiCard.style.display='none';
   // itens
   const items=getTodayItems();const list=$('todayList');list.innerHTML='';
   const min=dailyMin();const doneCount=items.filter(i=>i.done).length;
@@ -431,7 +457,7 @@ function renderMatches(){
   if(S.matchesCollapsed){body.style.display='none';$('matchesArrow').classList.add('up');return;}
   body.style.display='block';$('matchesArrow').classList.remove('up');
   const cache=S.matchesCache||{date:'',data:[]};
-  if(cache.date===todayKey()&&cache.data.length>0)showMatches(cache.data);
+  if(cache.date===todayKey()&&cache.data&&cache.data.length>0)showMatches(cache.data);
 }
 function showMatches(matches){
   const box=$('matchesList');
@@ -445,43 +471,61 @@ function showMatches(matches){
 /* ── FÉ ── */
 function renderFe(){
   const today=todayKey();
-  const readBox=$('readingContent');
-  if(S.lastReading&&S.lastReading.date===today)readBox.innerHTML=formatReading(S.lastReading.text,S.lastReading.source);
-  const todayRefl=S.reflections.find(r=>r.date===today);
+  // versículo
+  const todayV=(S.versiculos||[]).find(v=>v.date===today);
+  $('versiculoInput').value=todayV?todayV.text:'';
+  $('versiculoStatus').textContent=todayV?'✓ Versículo salvo hoje':'Ainda sem versículo hoje.';
+  // reflexão
+  const todayRefl=(S.reflections||[]).find(r=>r.date===today);
   $('reflectInput').value=todayRefl?todayRefl.text:'';
   $('todayReflectStatus').textContent=todayRefl?'✓ Reflexão salva — '+fmtDate(today):'Ainda sem reflexão hoje.';
   $('intentionBox').innerHTML=S.weekIntention?'<b>💭 Intenção da semana:</b> '+esc(S.weekIntention):'';
   if(S.lastWeekCard){$('weekCard').innerHTML=formatLetter(S.lastWeekCard);$('weekCard').dataset.generated='1';}
-  const rl=$('reflectionsList');const recent=[...S.reflections].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
-  if(recent.length===0){rl.innerHTML='<div class="empty small">Nenhuma reflexão ainda.</div>';return;}
-  rl.innerHTML=recent.map(r=>`<div class="reflect-item"><div class="reflect-date">${fmtDate(r.date)}</div>
-    <div class="reflect-text">${esc(r.text.slice(0,200))}${r.text.length>200?'…':''}</div></div>`).join('');
+  // reflexões recentes expansíveis
+  const rl=$('reflectionsList');
+  const recent=[...S.reflections].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  if(recent.length===0){rl.innerHTML='<div class="empty small">Nenhuma reflexão ainda. Escreva a sua acima.</div>';return;}
+  rl.innerHTML='';
+  recent.forEach(r=>{
+    const versiculo=(S.versiculos||[]).find(v=>v.date===r.date);
+    const item=document.createElement('div');item.className='reflect-item';
+    item.dataset.date=r.date;
+    item.innerHTML=`<div class="reflect-header">
+        <div class="reflect-date">${fmtDate(r.date)}</div>
+        <span class="reflect-arrow">▼</span>
+      </div>
+      <div class="reflect-preview">${esc(r.text)}</div>
+      <div class="reflect-full">
+        ${versiculo?`<div class="reflect-versiculo">"${esc(versiculo.text)}"</div>`:''}
+        ${esc(r.text)}
+      </div>`;
+    item.querySelector('.reflect-header').addEventListener('click',()=>{
+      const full=item.querySelector('.reflect-full');
+      const arrow=item.querySelector('.reflect-arrow');
+      const isOpen=full.classList.contains('open');
+      full.classList.toggle('open',!isOpen);
+      arrow.classList.toggle('open',!isOpen);
+    });
+    rl.appendChild(item);
+  });
 }
 
 /* ── TROFÉUS ── */
 function renderTrofeus(){
   if(S.lastMonthCard){$('monthCard').innerHTML=formatLetter(S.lastMonthCard);$('monthCard').dataset.generated='1';}
-  // memórias com Maria Clara
-  const mg=$('memoriesGrid');mg.innerHTML='';
-  const paiDates=S.paiDates||[];const total=paiDates.length;
-  const show=Math.min(total+5,30);
-  for(let i=0;i<show;i++){const d=document.createElement('div');d.className='memory-dot'+(i<total?' filled':'');
-    d.textContent=i<total?'💛':'';mg.appendChild(d);}
-  const mc=document.createElement('div');mc.className='memories-count';
-  mc.textContent=total+' dias de presença com Maria Clara 💛';
-  mg.after(mc);
-  // próximos troféus
   const earned=Object.keys(S.trophies||{}).length;$('trophyCount').textContent=earned+' / '+TROPHY_DEFS.length;
   const nt=$('nextTrophies');nt.innerHTML='';
-  const upcoming=TROPHY_DEFS.filter(d=>!S.trophies[d.id]).slice(0,3);
+  const upcoming=TROPHY_DEFS.filter(d=>!S.trophies[d.id]&&d.check).slice(0,3);
   upcoming.forEach(def=>{
     let prog=0,tot=1,label='';
     if(def.id.startsWith('streak_')){const n=parseInt(def.id.split('_')[1]);prog=Math.min(n,S.streak);tot=n;label=S.streak+'/'+n+' dias';}
-    else if(def.id.startsWith('foco_')){const n=parseInt(def.id.split('_')[1]);prog=Math.min(n,S.records.totalFocos||0);tot=n;label=prog+'/'+n+' focos';}
     else if(def.id.startsWith('xp_')){const n=parseInt(def.id.split('_')[1]);prog=Math.min(n,S.totalXpEver||0);tot=n;label=prog+'/'+n+' XP';}
     else if(def.id.startsWith('reflect_')){const n=parseInt(def.id.split('_')[1]);prog=Math.min(n,S.reflections.length);tot=n;label=prog+'/'+n+' reflexões';}
-    else if(def.id.startsWith('rival')){const n=def.id==='rival_3'?3:1;prog=Math.min(n,S.records.rivalWins||0);tot=n;label=prog+'/'+n+' vitórias';}
-    else if(def.id==='pai_10'){prog=Math.min(10,(S.paiDates||[]).length);tot=10;label=prog+'/10 dias';}
+    else if(def.id.startsWith('rival')){const n=def.id==='rival_3'||def.id==='rival_series'?3:1;prog=Math.min(n,S.records.rivalWins||0);tot=n;label=prog+'/'+n+' vitórias';}
+    else if(def.id.startsWith('pai_')){const n=parseInt(def.id.split('_')[1]);prog=Math.min(n,(S.paiDates||[]).length);tot=n;label=prog+'/'+n+' dias';}
+    else if(def.id.startsWith('obra_')){const n=def.id==='obra_5'?5:def.id==='obra_20'?20:def.id==='obra_analista'?5:1;
+      const v=def.id==='obra_analista'?Object.values(S.obraPosts||{}).filter(p=>p.likes||p.comments||p.saves||p.shares).length:Object.keys(S.obraPosts||{}).length;
+      prog=Math.min(n,v);tot=n;label=prog+'/'+n+' posts';}
     else{prog=0;tot=1;label='Em andamento';}
     const pct=tot>0?Math.round(prog/tot*100):0;
     const row=document.createElement('div');row.className='next-trophy';
@@ -491,7 +535,6 @@ function renderTrofeus(){
       <div class="nt-progress">${label}</div></div>`;
     nt.appendChild(row);
   });
-  // grid
   const grid=$('trophyGrid');grid.innerHTML='';
   TROPHY_DEFS.forEach(def=>{const gotIt=!!(S.trophies||{})[def.id];
     const div=document.createElement('div');div.className='trophy '+(gotIt?'earned':'locked');
@@ -501,7 +544,7 @@ function renderTrofeus(){
     grid.appendChild(div);});
 }
 
-/* ── LIGA + LINHA DO TEMPO ── */
+/* ── LIGA ── */
 function rivalState(){
   const today=new Date();today.setHours(12,0,0,0);const thisStart=weekStartOf(today);
   const lastStart=new Date(thisStart);lastStart.setDate(lastStart.getDate()-7);
@@ -517,16 +560,14 @@ function renderLiga(){
   if(diff>=0){stat.className='duel-status winning';stat.textContent='🟢 NA FRENTE por '+diff+' pts · meta: '+r.rivalTarget;}
   else{stat.className='duel-status behind';stat.textContent='🔴 Atrás por '+Math.abs(diff)+' pts · meta: '+r.rivalTarget;}
   renderTimeline();
-  // carreira
   const ch=$('careerHistory');ch.innerHTML='';
   const row=document.createElement('div');row.className='career-row';
   row.innerHTML=`<div class="cr-month">este mês</div><div class="cr-career">${currentCareer().name}</div><div class="cr-xp">${S.xpMonth} XP</div>`;
   ch.appendChild(row);
   const hist=S.careerHistory||[];
-  if(hist.length===0){const e=document.createElement('div');e.className='empty small';e.style.marginTop='8px';e.textContent='Histórico disponível a partir do próximo mês.';ch.appendChild(e);}
+  if(!hist.length){const e=document.createElement('div');e.className='empty small';e.style.marginTop='8px';e.textContent='Histórico disponível a partir do próximo mês.';ch.appendChild(e);}
   else hist.slice(0,6).forEach(h=>{const r=document.createElement('div');r.className='career-row';
     r.innerHTML=`<div class="cr-month">${h.month}</div><div class="cr-career">${h.careerName}</div><div class="cr-xp">${h.xp} XP</div>`;ch.appendChild(r);});
-  // recordes
   const rec=S.records||{};
   $('records').innerHTML=`
     <div class="rec"><div class="rec-val">${rec.bestStreak||0}</div><div class="rec-label">🔥 Maior seq.</div></div>
@@ -537,7 +578,7 @@ function renderLiga(){
     <div class="rec"><div class="rec-val">${Object.keys(S.trophies||{}).length}</div><div class="rec-label">🏅 Troféus</div></div>`;
   const wh=$('weeklyHistory');wh.innerHTML='';
   const weeks=Object.keys(S.weekly||{}).sort().reverse().slice(0,8);
-  if(weeks.length===0){wh.innerHTML='<div class="empty small">A primeira rodada fecha no próximo domingo.</div>';return;}
+  if(!weeks.length){wh.innerHTML='<div class="empty small">A primeira rodada fecha no próximo domingo.</div>';return;}
   weeks.forEach(wk=>{const w=S.weekly[wk];const row=document.createElement('div');
     row.className='week-row '+(w.won?'won':'lost');
     row.innerHTML=`<div class="week-date">Semana de ${fmtDate(wk)}</div><div class="week-score">${w.xp} × ${w.rival} ${w.won?'✓':''}</div>`;
@@ -545,11 +586,9 @@ function renderLiga(){
 }
 function renderTimeline(){
   const chart=$('timelineChart');chart.innerHTML='';
-  const days30=[];const today=new Date();
-  for(let i=29;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);days30.push(keyOf(d));}
-  const values=days30.map(k=>S.history[k]?.xp||0);
-  const maxVal=Math.max(...values,1);
-  const todayK=todayKey();
+  const today=new Date();const todayK=todayKey();
+  const days30=Array.from({length:30},(_,i)=>{const d=new Date(today);d.setDate(d.getDate()-(29-i));return keyOf(d);});
+  const values=days30.map(k=>S.history[k]?.xp||0);const maxVal=Math.max(...values,1);
   days30.forEach((k,i)=>{
     const v=values[i];const pct=Math.max(4,(v/maxVal*100));
     const bar=document.createElement('div');bar.className='tl-bar'+(k===todayK?' today':'')+(v===0?' zero':'');
@@ -560,17 +599,61 @@ function renderTimeline(){
 }
 
 /* ── IANAOBRA ── */
+function getMonthChampions(y,m){
+  const prefix=y+'-'+pad(m+1);
+  const posts=Object.entries(S.obraPosts||{}).filter(([k,v])=>k.startsWith(prefix)&&(v.likes||v.comments||v.saves||v.shares));
+  if(!posts.length)return null;
+  const champ=(metric)=>{
+    const sorted=[...posts].filter(([,v])=>v[metric]>0).sort(([,a],[,b])=>(b[metric]||0)-(a[metric]||0));
+    if(!sorted.length)return null;
+    const[k,v]=sorted[0];return{key:k,val:v[metric],preview:(v.content||'').slice(0,30)};
+  };
+  return{likes:champ('likes'),comments:champ('comments'),saves:champ('saves'),shares:champ('shares')};
+}
 function renderObra(){
   const y=S.calYear,m=S.calMonth;$('calTitle').textContent=monthName(y,m).toUpperCase();
+  // campeões do mês
+  const champs=getMonthChampions(y,m);const mc=$('monthChampions');
+  if(champs&&(champs.likes||champs.comments||champs.saves||champs.shares)){
+    mc.style.display='flex';mc.innerHTML='';
+    const items=[
+      {key:'likes',icon:'❤️',label:'Mais curtidas',champ:champs.likes},
+      {key:'comments',icon:'💬',label:'Mais comentários',champ:champs.comments},
+      {key:'saves',icon:'🔖',label:'Mais salvamentos',champ:champs.saves},
+      {key:'shares',icon:'🔁',label:'Mais compartilhamentos',champ:champs.shares},
+    ];
+    items.forEach(it=>{if(!it.champ)return;
+      const card=document.createElement('div');card.className='champion-card '+it.key;
+      card.innerHTML=`<div class="champion-icon">${it.icon}</div>
+        <div class="champion-label">${it.label}</div>
+        <div class="champion-val">${it.champ.val.toLocaleString('pt-BR')}</div>
+        <div class="champion-post">${fmtDate(it.champ.key)} · ${esc(it.champ.preview)}${it.champ.preview.length>=30?'…':''}</div>`;
+      mc.appendChild(card);});
+  }else mc.style.display='none';
+  // calendário
   const firstDay=new Date(y,m,1).getDay();const startOffset=firstDay===0?6:firstDay-1;
   const daysInMonth=new Date(y,m+1,0).getDate();const prevDays=new Date(y,m,0).getDate();
   const grid=$('calGrid');grid.innerHTML='';const today=todayKey();
+  // calcula quais dias são campeões de cada métrica neste mês
+  const champKeys={likes:champs?.likes?.key,comments:champs?.comments?.key,saves:champs?.saves?.key,shares:champs?.shares?.key};
   for(let i=0;i<startOffset;i++){const d=document.createElement('div');d.className='cal-day other-month';d.innerHTML=`<div class="cal-day-num">${prevDays-startOffset+1+i}</div>`;grid.appendChild(d);}
-  for(let day=1;day<=daysInMonth;day++){const k=y+'-'+pad(m+1)+'-'+pad(day);const post=S.obraPosts?.[k];
-    const d=document.createElement('div');d.className='cal-day'+(k===today?' today':'')+(post?' has-content':'');
+  for(let day=1;day<=daysInMonth;day++){
+    const k=y+'-'+pad(m+1)+'-'+pad(day);const post=S.obraPosts?.[k];
+    const hasMetrics=post&&(post.likes||post.comments||post.saves||post.shares);
+    const d=document.createElement('div');
+    d.className='cal-day'+(k===today?' today':'')+(hasMetrics?' has-metrics':post?' has-content':'');
     d.dataset.key=k;d.dataset.act='openCalDay';
-    const postPreview=post?`<div class="cal-day-dot"></div><div class="cal-day-preview">${esc((post.content||'').slice(0,40))}</div>`:'';
-    d.innerHTML=`<div class="cal-day-num">${day}</div>${postPreview}`;grid.appendChild(d);}
+    // medalhas de campeão
+    const medals=[];
+    if(champKeys.likes===k)medals.push('❤️');
+    if(champKeys.comments===k)medals.push('💬');
+    if(champKeys.saves===k)medals.push('🔖');
+    if(champKeys.shares===k)medals.push('🔁');
+    const medalsHtml=medals.length?`<div class="cal-day-medals">${medals.map(m=>`<span>${m}</span>`).join('')}</div>`:'';
+    const preview=post?`<div class="cal-day-preview">${esc((post.content||'').slice(0,25))}</div>`:'';
+    d.innerHTML=`<div class="cal-day-num">${day}</div>${preview}${medalsHtml}`;
+    grid.appendChild(d);
+  }
   const rem=(7-(startOffset+daysInMonth)%7)%7;
   for(let i=1;i<=rem;i++){const d=document.createElement('div');d.className='cal-day other-month';d.innerHTML=`<div class="cal-day-num">${i}</div>`;grid.appendChild(d);}
   $('ideasOutput').innerHTML='';
@@ -588,30 +671,16 @@ async function callAI(messages,system,max_tokens=1800,use_web_search=false){
   if(use_web_search&&data.text_only!=null)return data.text_only;
   return(data.content||[]).map(c=>c.text||'').join('').trim();
 }
-function formatReading(text,source){
-  const tag=source==='cnbb'?'<span class="source-tag">✓ Fonte: CNBB</span>':'<span class="source-tag" style="color:var(--neon-yellow);border-color:rgba(255,230,0,.3)">⚠️ Leituras aproximadas — confira em cnbb.org.br</span>';
-  const body=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').split('\n').map(l=>{const t=l.trim();if(!t)return '';
-    if(/^(PRIMEIRA LEITURA|EVANGELHO|SALMO|SEGUNDA LEITURA|REFLEXÃO)/i.test(t))return '<h4>'+esc(t)+'</h4>';
-    return '<p>'+esc(t)+'</p>';}).join('');
-  return `<div>${tag}${body}</div>`;
-}
-function formatLetter(text){return'<div>'+text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').split('\n').filter(l=>l.trim()).map(l=>'<p>'+esc(l.trim())+'</p>').join('')+'</div>';}
 
-async function loadDailyReading(){
-  showLoading('Buscando liturgia…','Consultando a CNBB e preparando a reflexão.');
-  try{const r=await fetch('/api/liturgia',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-    if(!r.ok)throw new Error('Erro '+r.status);const data=await r.json();if(data.error)throw new Error(data.error);
-    S.lastReading={date:todayKey(),text:data.text,source:data.source||'ia'};persist();
-    $('readingContent').innerHTML=formatReading(data.text,data.source);checkTrophy('daily_read');
-  }catch(e){$('readingContent').innerHTML='<div class="empty small">Erro: '+esc(e.message)+'</div>';}
-  finally{hideLoading();}
-}
 async function generateWeekCard(){
   const refl=[...S.reflections].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
-  if(refl.length===0){toast('SEM REFLEXÕES','Escreva pelo menos uma.');return;}
-  showLoading('Escrevendo carta…','O Frei lê suas reflexões.');
-  try{const text=await callAI([{role:'user',content:`Reflexões:\n\n${refl.map(r=>`[${fmtDate(r.date)}] ${r.text}`).join('\n\n')}\n\nSituação: seq. ${S.streak} dias, XP ${S.xpMonth}, carreira: ${currentCareer().name}${S.weekIntention?'\nIntenção anterior: "'+S.weekIntention+'"':''}\n\nCarta pastoral calorosa e direta, como padre próximo do povo. Apanhado espiritual, algo pra crescer, intenção pra próxima semana. Máx 300 palavras.`}],
-      'Você é um padre pastoral próximo do povo. Escreve cartas espirituais simples e diretas.');
+  if(!refl.length){toast('SEM REFLEXÕES','Escreva pelo menos uma antes de gerar a carta.');return;}
+  showLoading('Escrevendo carta…','O Frei lê suas reflexões e versículos.');
+  try{
+    const versics=(S.versiculos||[]).filter(v=>refl.some(r=>r.date===v.date));
+    const reflText=refl.map(r=>{const v=versics.find(x=>x.date===r.date);return`[${fmtDate(r.date)}]${v?' "'+v.text+'" — ':' '}${r.text}`;}).join('\n\n');
+    const text=await callAI([{role:'user',content:`Reflexões e versículos da semana:\n\n${reflText}\n\nSituação: seq. ${S.streak} dias, XP ${S.xpMonth}, carreira: ${currentCareer().name}${S.weekIntention?'\nIntenção: "'+S.weekIntention+'"':''}\n\nCarta pastoral calorosa e direta, como padre próximo do povo. Use os versículos como âncora espiritual da semana. Apanhado da semana, algo pra crescer, intenção pra próxima. Máx 300 palavras.`}],
+      'Você é um padre pastoral próximo do povo. Escreve cartas espirituais simples e diretas, usando a Palavra como âncora.');
     S.lastWeekCard=text;persist();$('weekCard').innerHTML=formatLetter(text);$('weekCard').dataset.generated='1';
     checkTrophy('week_card');setTimeout(()=>openIntentionModal(),1200);
   }catch(e){$('weekCard').innerHTML='<div class="empty small">Erro: '+esc(e.message)+'</div>';}
@@ -622,8 +691,9 @@ async function generateMonthCard(){
   try{const refl=[...S.reflections].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,14);
     const trophiesEarned=TROPHY_DEFS.filter(t=>(S.trophies||{})[t.id]).map(t=>t.name);
     const mk=curMonthKey();const activeDays=Object.keys(S.history||{}).filter(k=>k.startsWith(mk)&&(S.history[k].count>0||S.history[k].focos>0)).length;
-    const text=await callAI([{role:'user',content:`Carta mensal de balanço.\nXP: ${S.xpMonth} · Dias ativos: ${activeDays} · Seq: ${S.streak} · Carreira: ${currentCareer().name} · Focos: ${S.records.totalFocos||0} · Troféus: ${trophiesEarned.length>0?trophiesEarned.join(', '):'Nenhum'} · Dias com Maria Clara: ${(S.paiDates||[]).length}\n\nReflexões:\n${refl.length>0?refl.map(r=>`[${fmtDate(r.date)}] ${r.text}`).join('\n\n'):'Nenhuma.'}\n\nCarta pastoral de fim de mês: celebre o que foi bom, aponte o que pode melhorar, intenção pra próximo mês. Tom caloroso, direto. Máx 400 palavras.`}],
-      'Você é um padre pastoral que escreve cartas mensais de balanço e crescimento pessoal.');
+    const versics=(S.versiculos||[]).filter(v=>v.date.startsWith(mk)).map(v=>'"'+v.text+'"').join(' / ');
+    const text=await callAI([{role:'user',content:`Carta mensal de balanço.\nXP: ${S.xpMonth} · Dias ativos: ${activeDays} · Seq: ${S.streak} · Carreira: ${currentCareer().name} · Troféus: ${trophiesEarned.length>0?trophiesEarned.join(', '):'Nenhum'} · Dias com Maria Clara: ${(S.paiDates||[]).length}\n${versics?'Versículos do mês: '+versics+'\n':''}\nReflexões:\n${refl.length?refl.map(r=>`[${fmtDate(r.date)}] ${r.text}`).join('\n\n'):'Nenhuma.'}\n\nCarta pastoral de fim de mês. Use os versículos como âncora. Celebre o bem, aponte melhorias, intenção pro próximo mês. Máx 400 palavras.`}],
+      'Você é um padre pastoral que escreve cartas mensais de balanço e crescimento pessoal, usando a Palavra como âncora.');
     S.lastMonthCard=text;persist();$('monthCard').innerHTML=formatLetter(text);$('monthCard').dataset.generated='1';checkTrophy('month_card');
   }catch(e){$('monthCard').innerHTML='<div class="empty small">Erro: '+esc(e.message)+'</div>';}
   finally{hideLoading();}
@@ -635,34 +705,43 @@ async function loadMatches(){
     const text=await callAI([{role:'user',content:`Pesquise na web e liste TODOS os jogos de futebol HOJE (${today}) nos campeonatos: Brasileirão Série A, Libertadores, Sul-Americana, Copa do Mundo FIFA, Premier League, La Liga, Champions League, e jogos do Corinthians. Retorne APENAS JSON:\n[{"home":"Time A","away":"Time B","league":"Camp","time":"19:00","live":false}]\nSe não houver: []`}],
       'Retorne apenas JSON válido.',1200,true);
     let matches=[];try{const m=text.replace(/```json?|```/g,'').trim().match(/\[[\s\S]*\]/);matches=m?JSON.parse(m[0]):[];}catch(e){matches=[];}
-    S.matchesCache={date:todayKey(),data:matches};persist();showMatches(matches);
+    // SYNC: salva com timestamp para prevalecer sobre cache antigo em outros dispositivos
+    S.matchesCache={date:todayKey(),data:matches,_ts:Date.now()};
+    persist();showMatches(matches);
     if(!S.matchesCollapsed)$('matchesBody').style.display='block';
   }catch(e){$('matchesList').innerHTML='<div class="empty small">Erro: '+esc(e.message)+'</div>';}
   finally{hideLoading();if(btn)btn.textContent='↻';}
 }
 async function generateIdeas(){
   const cfg=S.obraConfig||{};if(!cfg.about){openObraConfig(true);return;}
-  showLoading('Gerando ideias…','IA pensando em conteúdo pra obra.');
-  try{const postsFeitos=Object.values(S.obraPosts||{}).filter(p=>p.posted).length;
-    const text=await callAI([{role:'user',content:`Sou criador do IAnaObra no Instagram. Público: engenheiros/profissionais da construção civil 30-45 anos que querem usar IA no dia a dia de obra e pessoal. Tom: didático, prático, como colega.\nContexto: ${cfg.about}${cfg.lastPosts?'\nÚltimos posts:\n'+cfg.lastPosts:''}\nPubliquei ${postsFeitos} posts. Me dê 5 ideias criativas. Para cada: título, formato (carrossel/reels/story), 2 linhas. APENAS JSON: [{"title":"...","format":"...","body":"..."}]`}],
+  showLoading('Gerando ideias…','IA analisando seu canal e métricas.');
+  try{
+    // inclui dados dos melhores posts para calibrar as ideias
+    const mk=curMonthKey();const champs=getMonthChampions(S.calYear,new Date().getMonth());
+    let metricsCtx='';
+    if(champs){
+      if(champs.likes)metricsCtx+=`\nPost com mais curtidas este mês (${champs.likes.val}): "${champs.likes.preview}"`;
+      if(champs.saves)metricsCtx+=`\nPost com mais salvamentos (${champs.saves.val}): "${champs.saves.preview}"`;
+    }
+    const text=await callAI([{role:'user',content:`Sou criador do IAnaObra no Instagram. Público: engenheiros/profissionais da construção civil 30-45 anos que querem usar IA no dia a dia de obra e pessoal. Tom: didático, prático, como colega.\nContexto: ${cfg.about}${cfg.lastPosts?'\nÚltimos posts:\n'+cfg.lastPosts:''}${metricsCtx}\n\nMe dê 5 ideias de conteúdo criativas. Para cada: título chamativo, formato sugerido (carrossel/reels/story), 2 linhas de desenvolvimento. APENAS JSON: [{"title":"...","format":"...","body":"..."}]`}],
       'Estrategista de conteúdo para Instagram, construção civil e IA.',1400);
     let ideas=[];try{const m=text.replace(/```json?|```/g,'').trim().match(/\[[\s\S]*\]/);ideas=m?JSON.parse(m[0]):[];}catch(e){ideas=[];}
     const out=$('ideasOutput');
-    if(ideas.length===0){out.innerHTML='<div class="empty small">Tente novamente.</div>';return;}
-    out.innerHTML=ideas.map(idea=>`<div class="idea-card"><div class="idea-title">${esc(idea.title||'')}</div>
-      <div class="idea-body">${esc(idea.body||'')}</div><div class="idea-format">📱 ${esc(idea.format||'')}</div></div>`).join('');
+    out.innerHTML=ideas.length?ideas.map(idea=>`<div class="idea-card">
+      <div class="idea-title">${esc(idea.title||'')}</div>
+      <div class="idea-body">${esc(idea.body||'')}</div>
+      <div class="idea-format">📱 ${esc(idea.format||'')}</div></div>`).join('')
+      :'<div class="empty small">Tente novamente.</div>';
   }catch(e){$('ideasOutput').innerHTML='<div class="empty small">Erro: '+esc(e.message)+'</div>';}
   finally{hideLoading();}
 }
-
-/* ── INSIGHTS LINHA DO TEMPO ── */
 async function generateInsights(){
   const out=$('insightsOutput');out.innerHTML='<div class="empty small">Gerando insights...</div>';
-  try{const days30=[];const today=new Date();
-    for(let i=29;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);days30.push(keyOf(d));}
-    const data=days30.map(k=>({date:fmtDate(k),xp:S.history[k]?.xp||0,tasks:S.history[k]?.count||0,focos:S.history[k]?.focos||0}));
-    const text=await callAI([{role:'user',content:`Aqui estão meus últimos 30 dias de produtividade:\n${JSON.stringify(data)}\n\nAnalise e me dê 3 insights curtos e práticos sobre meu padrão de produtividade: quando produzo mais, quando produzo menos, e uma recomendação objetiva. Seja direto, máximo 150 palavras no total.`}],
-      'Você é um analista de produtividade. Dê insights curtos, práticos e diretos.');
+  try{const today=new Date();
+    const days30=Array.from({length:30},(_,i)=>{const d=new Date(today);d.setDate(d.getDate()-(29-i));return keyOf(d);});
+    const data=days30.map(k=>({date:fmtDate(k),xp:S.history[k]?.xp||0,tasks:S.history[k]?.count||0}));
+    const text=await callAI([{role:'user',content:`Meus últimos 30 dias:\n${JSON.stringify(data)}\n\n3 insights curtos e práticos sobre meu padrão: quando produzo mais, quando produzo menos, uma recomendação objetiva. Máximo 150 palavras.`}],
+      'Analista de produtividade. Insights curtos, práticos e diretos.');
     out.innerHTML='<div class="ai-insight">'+formatLetter(text)+'</div>';
   }catch(e){out.innerHTML='<div class="empty small">Erro: '+esc(e.message)+'</div>';}
 }
@@ -670,14 +749,15 @@ async function generateInsights(){
 /* ── MODO PAI ── */
 function markPai(){
   const today=todayKey();S.paiDates=S.paiDates||[];
-  if(S.paiDates.includes(today)){toast('JÁ REGISTRADO','Presença de hoje já está marcada 💛');return;}
-  S.paiDates.push(today);addXP(15,true);persist();render();
+  if(S.paiDates.includes(today)){toast('JÁ REGISTRADO','Presença de hoje já marcada 💛');return;}
+  S.paiDates.push(today);recalcPaiStreak();addXP(15,true);persist();render();
   toast('MODO PAI ✓','Dia registrado com Maria Clara 💛');
-  if(S.paiDates.length>=10)checkTrophy('pai_10');
+  checkTrophy('pai_1');checkTrophy('pai_7');checkTrophy('pai_20');
 }
 async function getBrincadeira(){
   const btn=$('brincarBtn');btn.textContent='⏳';btn.disabled=true;
-  try{const r=await fetch('/api/brincadeira',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({context:'maria clara tem 5 anos e adora dançar, pinturas e histórias de princesas'})});
+  try{const r=await fetch('/api/brincadeira',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({context:'maria clara tem 5 anos'})});
     if(!r.ok)throw new Error('Erro '+r.status);const data=await r.json();if(data.error)throw new Error(data.error);
     const out=$('brincarOutput');
     out.innerHTML='<div class="brincar-result">'+data.text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').split('\n').filter(l=>l.trim()).map(l=>'<p>'+esc(l.trim())+'</p>').join('')+'</div>';
@@ -685,7 +765,7 @@ async function getBrincadeira(){
   finally{btn.textContent='✨ Sugira uma brincadeira';btn.disabled=false;}
 }
 
-/* ── REUNIÃO COM O TÉCNICO ── */
+/* ── TÉCNICO ── */
 let tecnicoMessages=[];
 async function openTecnico(){
   tecnicoMessages=[];$('tecnicoChat').innerHTML='';
@@ -694,88 +774,122 @@ async function openTecnico(){
 }
 async function startTecnico(){
   $('tecnicoStart').style.display='none';
-  // monta contexto completo da semana
   const wk=weekKeyOf();const days=weekDates(weekStartOf(new Date()));
   const weekXP=days.reduce((s,k)=>s+(S.history[k]?.xp||0),0);
   const weekTasks=days.reduce((s,k)=>s+(S.history[k]?.count||0),0);
-  const weekFocos=days.reduce((s,k)=>s+(S.history[k]?.focos||0),0);
   const weekPai=(S.paiDates||[]).filter(d=>days.includes(d)).length;
-  const weekRefl=S.reflections.filter(r=>days.includes(r.date)).length;
+  const weekRefl=(S.reflections||[]).filter(r=>days.includes(r.date)).length;
   const weekObra=Object.keys(S.obraPosts||{}).filter(k=>days.includes(k)).length;
-  const challenge=S.currentChallenge;const chalProg=challenge?challengeCurrentProgress(challenge):0;
-  const context=`DADOS DA SEMANA:\n- XP: ${weekXP}\n- Tarefas: ${weekTasks}\n- Blocos de foco: ${weekFocos}\n- Dias com Maria Clara: ${weekPai}/7\n- Reflexões escritas: ${weekRefl}\n- Posts IAnaObra: ${weekObra}\n- Sequência atual: ${S.streak} dias\n- Carreira: ${currentCareer().name}\n- Desafio da rodada: ${challenge?challenge.name+' ('+chalProg+'/'+challenge.goal+')':'nenhum'}\n- Tarefas atrasadas (+5 dias): ${S.tasks.filter(t=>!t.done&&taskIsRescue(t)).length}\n- Intenção da semana: "${S.weekIntention||'não definida'}"`;
-  const systemPrompt=`Você é o Técnico — um mentor pessoal direto, honesto e humano. Você analisou a semana do usuário e vai fazer uma reunião de feedback. Estilo: como um técnico de futebol no vestiário após o jogo — direto, sem enrolação, com carinho. Faça UMA pergunta por vez. Comece com uma análise breve da semana (3-4 linhas) e então faça a primeira pergunta mais importante. Após cada resposta, dê feedback breve e faça outra pergunta. Total de 3 perguntas. No final, feche com um plano de ação simples para a semana que começa.`;
-  tecnicoMessages=[{role:'user',content:context+'\n\nInicie a reunião de análise.'}];
+  const ch=S.currentChallenge;const chalProg=ch?challengeCurrentProgress(ch):0;
+  const context=`DADOS DA SEMANA:\n- XP: ${weekXP}\n- Tarefas: ${weekTasks}\n- Dias com Maria Clara: ${weekPai}/7\n- Reflexões: ${weekRefl}\n- Posts IAnaObra: ${weekObra}\n- Sequência: ${S.streak} dias\n- Carreira: ${currentCareer().name}\n- Desafio: ${ch?ch.name+' ('+chalProg+'/'+ch.goal+')':'nenhum'}\n- Tarefas atrasadas: ${S.tasks.filter(t=>!t.done&&taskIsRescue(t)).length}\n- Intenção: "${S.weekIntention||'não definida'}"`;
+  const systemPrompt=`Você é o Técnico — mentor direto, honesto e humano. Analise a semana e conduza uma reunião de feedback estilo técnico de futebol no vestiário. Faça UMA pergunta por vez. Comece com análise breve (3-4 linhas) e a primeira pergunta mais importante. Após cada resposta, dê feedback breve e faça outra pergunta. Total de 3 perguntas. Feche com plano de ação simples para a semana que começa.`;
+  tecnicoMessages=[{role:'user',content:context+'\n\nInicie a reunião.'}];
   addTecnicoMsg('tecnico','⏳ Analisando sua semana...');
   try{const r=await fetch('/api/tecnico',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({messages:tecnicoMessages,system:systemPrompt,max_tokens:600})});
     const data=await r.json();const text=data.text||'Erro ao carregar.';
     tecnicoMessages.push({role:'assistant',content:text});
-    replaceTecnicoPlaceholder(text);
-    $('tecnicoInputArea').style.display='block';
+    replaceTecnicoPlaceholder(text);$('tecnicoInputArea').style.display='block';
     setTimeout(()=>$('tecnicoReply').focus(),100);
   }catch(e){replaceTecnicoPlaceholder('Erro: '+e.message);}
 }
 async function sendTecnico(){
   const reply=$('tecnicoReply').value.trim();if(!reply)return;
-  $('tecnicoReply').value='';
-  addTecnicoMsg('user',reply);
-  tecnicoMessages.push({role:'user',content:reply});
-  addTecnicoMsg('tecnico','⏳ ...');
+  $('tecnicoReply').value='';addTecnicoMsg('user',reply);
+  tecnicoMessages.push({role:'user',content:reply});addTecnicoMsg('tecnico','⏳ ...');
   try{const r=await fetch('/api/tecnico',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:tecnicoMessages,system:`Você é o Técnico — mentor direto, honesto e humano, estilo técnico de futebol. Continue a reunião. Se já fez 3 perguntas, feche com um plano de ação simples para a semana. Seja breve.`,max_tokens:500})});
+      body:JSON.stringify({messages:tecnicoMessages,system:'Você é o Técnico — mentor direto. Continue a reunião. Se já fez 3 perguntas, feche com plano de ação para a semana. Seja breve.',max_tokens:500})});
     const data=await r.json();const text=data.text||'Erro.';
     tecnicoMessages.push({role:'assistant',content:text});replaceTecnicoPlaceholder(text);
   }catch(e){replaceTecnicoPlaceholder('Erro: '+e.message);}
 }
 function addTecnicoMsg(role,text){
   const chat=$('tecnicoChat');const div=document.createElement('div');div.className='tc-msg '+role;
-  const label=role==='tecnico'?'🧠 TÉCNICO':'VOCÊ';
-  div.innerHTML=`<div class="tc-label">${label}</div><div class="tc-text"><p>${esc(text)}</p></div>`;
-  div.setAttribute('data-role',role);chat.appendChild(div);chat.scrollTop=chat.scrollHeight;return div;
+  div.innerHTML=`<div class="tc-label">${role==='tecnico'?'🧠 TÉCNICO':'VOCÊ'}</div><div class="tc-text"><p>${esc(text)}</p></div>`;
+  chat.appendChild(div);chat.scrollTop=chat.scrollHeight;return div;
 }
 function replaceTecnicoPlaceholder(text){
   const chat=$('tecnicoChat');const placeholders=chat.querySelectorAll('.tc-msg.tecnico');
   const last=placeholders[placeholders.length-1];
-  if(last){last.querySelector('.tc-text').innerHTML=formatLetter(text);}
-  $('tecnicoChat').scrollTop=$('tecnicoChat').scrollHeight;
+  if(last)last.querySelector('.tc-text').innerHTML=formatLetter(text);
+  chat.scrollTop=chat.scrollHeight;
 }
 
 /* ── AÇÕES GERAIS ── */
 function toggle(kind,id,el){
   const t=todayKey();
   if(kind==='task'){const tk=S.tasks.find(x=>x.id===id);if(!tk)return;const wasNotDone=!tk.done;tk.done=!tk.done;
-    if(tk.done&&wasNotDone){const rescue=taskIsRescue(tk);const xpVal=taskXP(tk);const res=addXP(xpVal);celebrate(el,res);let earned=res.gained;
-      if(rescue){const r2=addXP(XP.resgate,true);earned+=r2.gained;S.records.rescues=(S.records.rescues||0)+1;checkTrophy('rescue_1');if(S.records.rescues>=5)checkTrophy('rescue_5');setTimeout(()=>toast('LIMPEZA DE BACKLOG! 🧹','+'+XP.resgate+' pts'),900);}
+    if(tk.done&&wasNotDone){
+      const h=new Date().getHours();
+      if(h<8){S.records.earlyBird=true;checkTrophy('madrugador');}
+      if(h>=22){S.records.nightOwl=true;checkTrophy('coruja');}
+      if(new Date().getDay()===0){S.records.sundayWin=true;checkTrophy('domingo_prod');}
+      const rescue=taskIsRescue(tk);const xpVal=taskXP(tk);const res=addXP(xpVal);celebrate(el,res);let earned=res.gained;
+      if(rescue){const r2=addXP(XP.resgate,true);earned+=r2.gained;S.records.rescues=(S.records.rescues||0)+1;
+        checkTrophy('rescue_1');if(S.records.rescues>=5)checkTrophy('rescue_5');
+        setTimeout(()=>toast('LIMPEZA DE BACKLOG! 🧹','+'+XP.resgate+' pts'),900);}
       tk.doneDate=todayKey();tk.xpEarned=earned;tk.wasRescue=rescue;checkTrophy('first_task');registerProgress('item');}
   }else if(kind==='habit'){const hb=S.habits.find(x=>x.id===id);if(!hb)return;
     hb.doneDates=hb.doneDates||[];
     if(hb.doneDates.includes(t))hb.doneDates=hb.doneDates.filter(x=>x!==t);
-    else{hb.doneDates.push(t);celebrate(el,addXP(XP.habit));registerProgress('item');
-      if(countConsec(hb.doneDates)>=7)checkTrophy('habit_7');}}
+    else{hb.doneDates.push(t);celebrate(el,addXP(XP.habit));registerProgress('item');}
+  }
   persist();render();
 }
-function countConsec(dates){if(!dates||dates.length===0)return 0;const s=[...dates].sort().reverse();let c=1;for(let i=1;i<s.length;i++){if(daysBetween(s[i],s[i-1])===1)c++;else break;}return c;}
 function del(kind,id){if(kind==='task')S.tasks=S.tasks.filter(x=>x.id!==id);else S.habits=S.habits.filter(x=>x.id!==id);persist();render();}
 function addItem(){const inp=$('addInput');const v=inp.value.trim();if(!v)return;
   if(S.addMode==='task')S.tasks.unshift({id:'t'+Date.now(),name:v,done:false,date:todayKey()});
   else S.habits.unshift({id:'h'+Date.now(),name:v,icon:'🔁',sub:'Hábito diário',doneDates:[]});
   inp.value='';persist();render();inp.focus();}
+function saveVersiculo(){const text=$('versiculoInput').value.trim();if(!text){toast('VAZIO','');return;}
+  const today=todayKey();S.versiculos=S.versiculos||[];
+  S.versiculos=S.versiculos.filter(v=>v.date!==today);S.versiculos.push({date:today,text});
+  persist();renderFe();toast('VERSÍCULO SALVO ✨','Vai aparecer na sua carta semanal.');checkTrophy('versiculo_1');}
 function saveReflection(){const text=$('reflectInput').value.trim();if(!text){toast('VAZIO','');return;}
   const today=todayKey();S.reflections=S.reflections.filter(r=>r.date!==today);S.reflections.push({date:today,text});
-  persist();renderFe();toast('REFLEXÃO SALVA ✍️','');checkTrophy('reflect_1');checkTrophy('reflect_7');}
-function openCalDay(k){const post=S.obraPosts?.[k]||{content:'',posted:false};const[y,m,d]=k.split('-');
-  $('formModal').innerHTML=`<h3>📅 ${d}/${m}/${y}</h3>
-    <label>Conteúdo planejado / executado</label><textarea id="calContent" rows="4">${esc(post.content||'')}</textarea>
-    <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+  persist();renderFe();toast('REFLEXÃO SALVA ✍️','');checkTrophy('reflect_1');checkTrophy('reflect_3');checkTrophy('reflect_7');checkTrophy('reflect_30');
+  // fé e foco
+  const hst=S.history[today]||{count:0};if(hst.count>=3)checkTrophy('fe_e_foco');}
+
+/* ── OBRA: modal de post com métricas ── */
+function openCalDay(k){
+  const post=S.obraPosts?.[k]||{content:'',posted:false,likes:0,comments:0,saves:0,shares:0};
+  const[y,m,d]=k.split('-');const hasMetrics=post.posted;
+  $('obraPostModal').innerHTML=`<h3>📅 ${d}/${m}/${y}</h3>
+    <label>Conteúdo planejado / executado</label>
+    <textarea id="calContent" rows="3">${esc(post.content||'')}</textarea>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
       <input type="checkbox" id="calPosted" ${post.posted?'checked':''} style="width:auto;accent-color:var(--neon-green)">
-      <label style="margin:0;text-transform:none;font-size:14px">Post já publicado ✓</label></div>
-    <div class="modal-actions"><button class="m-close" data-close-form>CANCELAR</button><button class="m-save" id="saveCalBtn">SALVAR</button></div>`;
-  $('formOverlay').classList.add('show');setTimeout(()=>$('calContent').focus(),50);
-  $('saveCalBtn').onclick=()=>{const c=$('calContent').value.trim();const p=$('calPosted').checked;
-    if(!S.obraPosts)S.obraPosts={};if(c){S.obraPosts[k]={content:c,posted:p};
-      const cnt=Object.keys(S.obraPosts).length;if(cnt>=5)checkTrophy('obra_5');if(cnt>=20)checkTrophy('obra_20');}
-    else delete S.obraPosts[k];persist();$('formOverlay').classList.remove('show');renderObra();};}
+      <label style="margin:0;text-transform:none;font-size:14px">Post já publicado ✓</label>
+    </div>
+    <div id="metricsSection" style="${post.posted?'':'display:none'}">
+      <div style="margin:12px 0 6px;font-family:'Press Start 2P';font-size:9px;color:var(--muted)">MÉTRICAS (após 48h)</div>
+      <div class="metrics-grid">
+        <div class="metric-input likes"><label>❤️ Curtidas</label><input type="number" id="mLikes" min="0" value="${post.likes||0}"></div>
+        <div class="metric-input comments"><label>💬 Comentários</label><input type="number" id="mComments" min="0" value="${post.comments||0}"></div>
+        <div class="metric-input saves"><label>🔖 Salvamentos</label><input type="number" id="mSaves" min="0" value="${post.saves||0}"></div>
+        <div class="metric-input shares"><label>🔁 Compartilhamentos</label><input type="number" id="mShares" min="0" value="${post.shares||0}"></div>
+      </div>
+    </div>
+    <div class="modal-actions"><button class="m-close" data-close-obra>CANCELAR</button><button class="m-save" id="saveObraBtn">SALVAR</button></div>`;
+  $('obraPostOverlay').classList.add('show');
+  setTimeout(()=>$('calContent').focus(),50);
+  // mostrar/ocultar métricas ao marcar "publicado"
+  $('calPosted').addEventListener('change',e=>{
+    $('metricsSection').style.display=e.target.checked?'block':'none';});
+  $('saveObraBtn').onclick=()=>{
+    const content=$('calContent').value.trim();const posted=$('calPosted').checked;
+    const likes=parseInt($('mLikes')?.value||0,10)||0;const comments=parseInt($('mComments')?.value||0,10)||0;
+    const saves=parseInt($('mSaves')?.value||0,10)||0;const shares=parseInt($('mShares')?.value||0,10)||0;
+    if(!S.obraPosts)S.obraPosts={};
+    if(content){S.obraPosts[k]={content,posted,likes,comments,saves,shares};
+      const cnt=Object.keys(S.obraPosts).length;if(cnt>=5)checkTrophy('obra_5');if(cnt>=20)checkTrophy('obra_20');
+      if(likes||comments||saves||shares){checkTrophy('obra_metrica');
+        const withMetrics=Object.values(S.obraPosts).filter(p=>p.likes||p.comments||p.saves||p.shares).length;
+        if(withMetrics>=5)checkTrophy('obra_analista');}}
+    else delete S.obraPosts[k];
+    persist();$('obraPostOverlay').classList.remove('show');renderObra();};
+}
 function openObraConfig(fromIdeas=false){const cfg=S.obraConfig||{};
   $('formModal').innerHTML=`<h3>🧱 Configurar IAnaObra</h3>${fromIdeas?'<p style="color:var(--neon-yellow)">Configure seu canal primeiro.</p>':''}
     <label>Sobre o canal</label><textarea id="cfgAbout" rows="4">${esc(cfg.about||'')}</textarea>
@@ -822,6 +936,7 @@ document.addEventListener('click',e=>{
     $('addBtn').className='btn'+(S.addMode==='habit'?' pink':'');return;}
   const bn=e.target.closest('.bnav-btn');if(bn){go(bn.dataset.view);return;}
   if(e.target.matches('[data-close-form]')||e.target===$('formOverlay'))$('formOverlay').classList.remove('show');
+  if(e.target.matches('[data-close-obra]')||e.target===$('obraPostOverlay'))$('obraPostOverlay').classList.remove('show');
   if(e.target===$('tecnicoOverlay'))$('tecnicoOverlay').classList.remove('show');
 });
 $('addBtn').addEventListener('click',addItem);
@@ -831,11 +946,11 @@ $('gearBtn').addEventListener('click',openSync);
 $('closeBtn').addEventListener('click',closeSync);
 $('linkBtn').addEventListener('click',linkCode);
 $('copyBtn').addEventListener('click',()=>navigator.clipboard.writeText(Store.code()).then(()=>toast('COPIADO ✅','')));
-$('loadReadingBtn').addEventListener('click',loadDailyReading);
+$('saveVersiculoBtn').addEventListener('click',saveVersiculo);
 $('saveReflectBtn').addEventListener('click',saveReflection);
 $('weekCardBtn').addEventListener('click',generateWeekCard);
 $('monthCardBtn').addEventListener('click',generateMonthCard);
-$('refreshMatches').addEventListener('click',()=>{S.matchesCache={date:'',data:[]};persist();loadMatches();});
+$('refreshMatches').addEventListener('click',()=>{S.matchesCache={date:'',data:[],_ts:0};persist();loadMatches();});
 $('ideasBtn').addEventListener('click',generateIdeas);
 $('obraConfigBtn').addEventListener('click',()=>openObraConfig(false));
 $('calPrev').addEventListener('click',()=>{S.calMonth--;if(S.calMonth<0){S.calMonth=11;S.calYear--;}renderObra();});
@@ -858,39 +973,56 @@ $('matchesToggle').addEventListener('click',e=>{
 });
 
 /* ── BOOT ── */
-(async function init(){
-  Store.init();
-  const local=Store.loadLocal();if(local)S=Object.assign(S,local);
+function ensureFields(){
   S.history=S.history||{};S.weekly=S.weekly||{};S.trophies=S.trophies||{};
-  S.reflections=S.reflections||[];S.obraPosts=S.obraPosts||{};
-  S.obraConfig=S.obraConfig||{about:'',lastPosts:''};
+  S.reflections=S.reflections||[];S.versiculos=S.versiculos||[];
+  S.obraPosts=S.obraPosts||{};S.obraConfig=S.obraConfig||{about:'',lastPosts:''};
   S.matchesCache=S.matchesCache||{date:'',data:[]};
   S.records=Object.assign({bestStreak:0,bestWeekXP:0,mostFocosInDay:0,totalFocos:0,rivalWins:0,rescues:0},S.records||{});
   S.xpMonth=S.xpMonth||0;S.totalXpEver=S.totalXpEver||S.xp||0;
-  S.careerHistory=S.careerHistory||[];S.paiDates=S.paiDates||[];
-  S.lastReading=S.lastReading||null;S.lastWeekCard=S.lastWeekCard||null;S.lastMonthCard=S.lastMonthCard||null;
+  S.careerHistory=S.careerHistory||[];S.paiDates=S.paiDates||[];S.paiStreak=S.paiStreak||0;
+  S.lastWeekCard=S.lastWeekCard||null;S.lastMonthCard=S.lastMonthCard||null;
   S.challengesWon=S.challengesWon||0;S.tecnicoSessions=S.tecnicoSessions||[];
-  delete S.projects;delete S.rewards;
+  delete S.projects;delete S.rewards;delete S.lastReading;
+}
+(async function init(){
+  Store.init();
+  const local=Store.loadLocal();if(local)S=Object.assign(S,local);
+  ensureFields();
   S.showAll=false;S.addMode='task';S.view='hoje';
   S.calYear=new Date().getFullYear();S.calMonth=new Date().getMonth();S.matchesCollapsed=false;
   setStatus(Store.online()?'sync':'off');render();
-  if(Store.online()){const remote=await Store.pull();
-    if(remote&&(remote._updatedAt||0)>(S._updatedAt||0)){
-      S=Object.assign(S,remote);S.history=S.history||{};S.weekly=S.weekly||{};S.trophies=S.trophies||{};
-      S.reflections=S.reflections||[];S.obraPosts=S.obraPosts||{};
-      S.obraConfig=S.obraConfig||{about:'',lastPosts:''};S.matchesCache=S.matchesCache||{date:'',data:[]};
-      S.records=Object.assign({bestStreak:0,bestWeekXP:0,mostFocosInDay:0,totalFocos:0,rivalWins:0,rescues:0},S.records||{});
-      S.xpMonth=S.xpMonth||0;S.totalXpEver=S.totalXpEver||S.xp||0;S.careerHistory=S.careerHistory||[];
-      S.paiDates=S.paiDates||[];S.lastReading=S.lastReading||null;
-      S.lastWeekCard=S.lastWeekCard||null;S.lastMonthCard=S.lastMonthCard||null;
-      S.challengesWon=S.challengesWon||0;delete S.projects;delete S.rewards;
-      S.showAll=false;S.addMode='task';S.view='hoje';Store.saveLocal(remote);}setStatus('ok');}
+
+  if(Store.online()){
+    const remote=await Store.pull();
+    if(remote){
+      // merge inteligente: usa o mais recente, mas preserva matchesCache pelo timestamp
+      const localTs=S._updatedAt||0;const remoteTs=remote._updatedAt||0;
+      const localMatchTs=S.matchesCache?._ts||0;const remoteMatchTs=remote.matchesCache?._ts||0;
+      if(remoteTs>localTs){
+        const savedMatchCache=localMatchTs>=remoteMatchTs?S.matchesCache:null;
+        S=Object.assign(S,remote);ensureFields();
+        if(savedMatchCache)S.matchesCache=savedMatchCache;
+        S.showAll=false;S.addMode='task';S.view='hoje';Store.saveLocal(S);
+      } else if(remoteMatchTs>localMatchTs){
+        // só o cache de jogos é mais novo no remoto
+        S.matchesCache=remote.matchesCache;
+      }
+    }
+    setStatus('ok');
+  }
+
   if(!S._seededHabits&&S.habits.length===0){
     S.habits.push({id:'h0',name:'Tomar Venvanse',icon:'💊',sub:'07:00 · pico vem aí',doneDates:[]});S._seededHabits=true;}
-  pruneOldTasks();rollover();checkAllTrophies();persist();render();
+
+  pruneOldTasks();recalcPaiStreak();rollover();checkAllTrophies();persist();render();
+
   if(pendingMsg){setTimeout(()=>{
     if(pendingMsg.type==='shield')toast('ESCUDO ATIVADO 🛡️','Sequência preservada!');
     if(pendingMsg.type==='reset')toast('NOVO JOGO 🟢','Bata o mínimo hoje.');},600);}
-  if(S.lastReading&&S.lastReading.date===todayKey())$('readingContent').innerHTML=formatReading(S.lastReading.text,S.lastReading.source);
+
+  // mostra jogos do cache se existir
+  if(S.matchesCache?.date===todayKey()&&S.matchesCache?.data?.length>0)showMatches(S.matchesCache.data);
+
   setInterval(()=>{if(S.view==='hoje'){renderContext();renderDayResume();renderTecnicoBtn();}},60000);
 })();

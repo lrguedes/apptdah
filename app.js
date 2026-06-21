@@ -659,9 +659,236 @@ function renderObra(){
   $('ideasOutput').innerHTML='';
 }
 
-/* ── IA ── */
-function showLoading(t='Consultando IA…',s='Aguenta uns segundinhos.'){$('loadingTitle').textContent=t;$('loadingSub').textContent=s;$('loadingOverlay').classList.add('show');}
-function hideLoading(){$('loadingOverlay').classList.remove('show');}
+/* ── PROMPT BUILDER (sem API — copiar e colar no Claude/GPT) ── */
+function showPrompt(title, desc, prompt){
+  $('promptTitle').textContent='✨ '+title;
+  $('promptDesc').textContent=desc;
+  $('promptBox').textContent=prompt;
+  $('promptOverlay').classList.add('show');
+}
+
+function generateWeekCard(){
+  const refl=[...S.reflections].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
+  if(!refl.length){toast('SEM REFLEXÕES','Escreva pelo menos uma reflexão antes.');return;}
+  const versics=(S.versiculos||[]).filter(v=>refl.some(r=>r.date===v.date));
+  const reflText=refl.map(r=>{
+    const v=versics.find(x=>x.date===r.date);
+    return `[${fmtDate(r.date)}]${v?' Versículo: "'+v.text+'"\n':'\n'}Reflexão: ${r.text}`;
+  }).join('\n\n');
+  const prompt=`Você é um padre pastoral próximo do povo — caloroso, direto e humano, como um amigo sacerdote que fala de coração aberto.
+
+Aqui estão minhas reflexões e versículos desta semana:
+
+${reflText}
+
+Minha situação esta semana:
+- Sequência de dias produtivos: ${S.streak} dias
+- XP conquistado no mês: ${S.xpMonth}
+- Fase da carreira no meu app de produtividade: ${currentCareer().name}${S.weekIntention?'\n- Intenção da semana passada: "'+S.weekIntention+'"':''}
+
+Com base em tudo isso, escreva uma carta pastoral para mim:
+1. Faça um apanhado espiritual da semana usando os versículos como âncora
+2. Aponte UMA coisa concreta para crescer na próxima semana
+3. Termine com uma intenção simples e prática para os próximos 7 dias
+4. Me pergunte qual é minha intenção para a semana que começa
+
+Tom: como um padre que fala de coração, linguagem simples e próxima do cotidiano. Máximo 300 palavras.`;
+  showPrompt('CARTA SEMANAL DO FREI',
+    'Cole esse prompt no Claude (claude.ai) ou GPT. O Claude gratuito dá ótimas cartas pastorais.',
+    prompt);
+  checkTrophy('week_card');persist();
+}
+
+function generateMonthCard(){
+  const refl=[...S.reflections].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,14);
+  const trophiesEarned=TROPHY_DEFS.filter(t=>(S.trophies||{})[t.id]).map(t=>t.icon+' '+t.name);
+  const mk=curMonthKey();
+  const activeDays=Object.keys(S.history||{}).filter(k=>k.startsWith(mk)&&(S.history[k].count>0||S.history[k].focos>0)).length;
+  const versics=(S.versiculos||[]).filter(v=>v.date.startsWith(mk)).map(v=>'"'+v.text+'"').join('\n');
+  const reflText=refl.length?refl.map(r=>`[${fmtDate(r.date)}] ${r.text}`).join('\n\n'):'Nenhuma reflexão escrita este mês.';
+  const prompt=`Você é um padre pastoral que escreve cartas mensais de balanço e crescimento pessoal.
+
+MEUS NÚMEROS DO MÊS:
+- XP conquistado: ${S.xpMonth}
+- Dias ativos: ${activeDays}
+- Sequência atual: ${S.streak} dias consecutivos
+- Fase da carreira: ${currentCareer().name}
+- Dias de presença com minha filha Maria Clara (5 anos): ${(S.paiDates||[]).filter(d=>d.startsWith(mk)).length}
+- Troféus conquistados: ${trophiesEarned.length?trophiesEarned.join(', '):'Nenhum este mês'}
+
+VERSÍCULOS QUE GUARDEI ESTE MÊS:
+${versics||'Nenhum versículo salvo este mês.'}
+
+MINHAS REFLEXÕES DO MÊS:
+${reflText}
+
+Escreva uma carta pastoral de fim de mês para mim:
+1. Celebre o que foi bom com base nos números e nas reflexões
+2. Use os versículos como âncora espiritual do balanço
+3. Aponte honestamente o que pode melhorar
+4. Proponha uma intenção concreta para o próximo mês
+5. Mencione a Maria Clara — a presença com ela é sagrada
+
+Tom: caloroso, direto, como um padre amigo. Máximo 400 palavras.`;
+  showPrompt('CARTA DO MÊS',
+    'Cole no Claude (claude.ai) — é o melhor para cartas espirituais. Totalmente gratuito.',
+    prompt);
+  checkTrophy('month_card');persist();
+}
+
+function generateIdeas(){
+  const cfg=S.obraConfig||{};
+  if(!cfg.about){openObraConfig(true);return;}
+  const champs=getMonthChampions(S.calYear,new Date().getMonth());
+  let metricsCtx='';
+  if(champs){
+    if(champs.likes)metricsCtx+=`\n- Post com mais curtidas este mês (${champs.likes.val}❤️): "${champs.likes.preview}"`;
+    if(champs.saves)metricsCtx+=`\n- Post com mais salvamentos (${champs.saves.val}🔖): "${champs.saves.preview}"`;
+    if(champs.comments)metricsCtx+=`\n- Post com mais comentários (${champs.comments.val}💬): "${champs.comments.preview}"`;
+  }
+  const totalPosts=Object.keys(S.obraPosts||{}).length;
+  const prompt=`Você é um estrategista de conteúdo especializado em Instagram para profissionais da construção civil.
+
+MEU CANAL — IAnaObra:
+- Público: engenheiros e profissionais da construção civil, 30-45 anos, que querem usar IA no dia a dia de obra e na vida pessoal
+- Tom: didático, prático, como um colega de profissão que está um passo à frente — não professor, mas parceiro
+- Sobre o canal: ${cfg.about}
+${cfg.lastPosts?'- Últimos posts que funcionaram bem: '+cfg.lastPosts:''}
+- Total de posts publicados: ${totalPosts}
+
+DADOS DO QUE FUNCIONOU MELHOR ESTE MÊS:${metricsCtx||'\nAinda sem métricas registradas.'}
+
+Com base nesse contexto, me dê 5 ideias de conteúdo diferentes e criativas para postar agora. Para cada ideia:
+1. Título chamativo (que pare o scroll)
+2. Formato sugerido: carrossel / reels / story
+3. 3-4 linhas desenvolvendo a ideia
+4. Por que esse formato/tema tende a performar bem para esse público
+
+Seja específico — não quero ideias genéricas de "use IA para X". Quero ideias que esse engenheiro de obra vai parar pra salvar.`;
+  showPrompt('IDEIAS PARA O IANAOBRA',
+    'Cole no Claude, GPT ou Gemini. GPT-4o tende a ser criativo para ideias de conteúdo.',
+    prompt);
+}
+
+function generateInsights(){
+  const today=new Date();
+  const days30=Array.from({length:30},(_,i)=>{const d=new Date(today);d.setDate(d.getDate()-(29-i));return keyOf(d);});
+  const data=days30.map(k=>({
+    data:fmtDate(k),
+    xp:S.history[k]?.xp||0,
+    tarefas:S.history[k]?.count||0,
+    diaSemana:dateFromKey(k).toLocaleDateString('pt-BR',{weekday:'short'})
+  }));
+  const prompt=`Você é um analista de produtividade pessoal. Analise meus dados dos últimos 30 dias e me dê insights práticos.
+
+MEUS DADOS (data | dia | XP | tarefas concluídas):
+${data.map(d=>`${d.data} (${d.diaSemana}) | ${d.xp} XP | ${d.tarefas} tarefas`).join('\n')}
+
+Com base nesses dados, me diga:
+1. Em quais dias da semana eu produzo mais? E menos?
+2. Existe algum padrão (semanas boas vs semanas ruins)?
+3. Uma recomendação prática e específica para melhorar minha consistência
+
+Seja direto e objetivo. Máximo 150 palavras. Use os dados reais para embasar cada insight.`;
+  const out=$('insightsOutput');
+  out.innerHTML=`<div class="ai-insight">
+    <strong>Prompt gerado!</strong><p>Copie o prompt abaixo e cole no Claude ou GPT para receber análise do seu padrão de 30 dias.</p>
+    <button class="btn" onclick="showPrompt('INSIGHTS DE PRODUTIVIDADE','Análise dos seus 30 dias de dados reais.', document.querySelector('.insight-prompt-hidden').textContent)" style="margin-top:8px;font-size:9px;">📋 VER PROMPT</button>
+    <div class="insight-prompt-hidden" style="display:none">${prompt}</div>
+  </div>`;
+}
+
+function getBrincadeira(){
+  const prompt=`Você é um especialista em desenvolvimento infantil e brincadeiras criativas para crianças de 5 anos.
+
+Minha filha se chama Maria Clara e tem 5 anos.
+
+Me sugira UMA brincadeira criativa, simples e cheia de afeto que eu possa fazer com ela AGORA. Preciso de:
+1. Nome da brincadeira
+2. Como fazer (3-4 passos bem simples)
+3. Por que ela vai adorar (o que desenvolve e diverte)
+4. Uma dica de como tornar o momento ainda mais especial
+
+Seja caloroso e divertido. A brincadeira deve ser possível em casa, sem precisar comprar nada.`;
+  const out=$('brincarOutput');
+  out.innerHTML=`<div class="brincar-result">
+    <p>Prompt pronto! Cole no Claude ou ChatGPT pra receber uma sugestão de brincadeira pra Maria Clara. 💛</p>
+    <button class="btn pink" onclick="navigator.clipboard.writeText(document.querySelector('.brincadeira-prompt').textContent).then(()=>toast('COPIADO ✅','Cole no Claude ou ChatGPT'))" style="font-size:9px;margin-top:8px;">📋 COPIAR PROMPT</button>
+    <div class="brincadeira-prompt" style="display:none">${prompt}</div>
+  </div>`;
+}
+
+/* ── TÉCNICO — gera prompt completo para copiar ── */
+function openTecnico(){
+  $('tecnicoOverlay').classList.add('show');
+  $('tecnicoStart').style.display='block';
+  $('tecnicoInputArea').style.display='none';
+  $('tecnicoChat').innerHTML='';
+}
+function startTecnico(){
+  const days=weekDates(weekStartOf(new Date()));
+  const weekXP=days.reduce((s,k)=>s+(S.history[k]?.xp||0),0);
+  const weekTasks=days.reduce((s,k)=>s+(S.history[k]?.count||0),0);
+  const weekPai=(S.paiDates||[]).filter(d=>days.includes(d)).length;
+  const weekRefl=(S.reflections||[]).filter(r=>days.includes(r.date)).length;
+  const weekObra=Object.keys(S.obraPosts||{}).filter(k=>days.includes(k)).length;
+  const ch=S.currentChallenge;const chalProg=ch?challengeCurrentProgress(ch):0;
+  const reflDaSemana=(S.reflections||[]).filter(r=>days.includes(r.date)).map(r=>`[${fmtDate(r.date)}] ${r.text}`).join('\n');
+  const prompt=`Você é o Técnico — um mentor pessoal direto, honesto e humano. Seu estilo é como um técnico de futebol no vestiário após o jogo: direto, sem enrolação, com carinho.
+
+DADOS DA MINHA SEMANA:
+- XP conquistado: ${weekXP} pts
+- Tarefas concluídas: ${weekTasks}
+- Dias com minha filha Maria Clara: ${weekPai} de 7
+- Reflexões de fé escritas: ${weekRefl}
+- Posts publicados no Instagram (IAnaObra): ${weekObra}
+- Sequência atual de dias produtivos: ${S.streak} dias
+- Fase da minha carreira no app: ${currentCareer().name}
+- Desafio da semana: ${ch?ch.name+' — progresso: '+chalProg+'/'+ch.goal:'nenhum ativo'}
+- Tarefas atrasadas (mais de 5 dias paradas): ${S.tasks.filter(t=>!t.done&&taskIsRescue(t)).length}
+- Minha intenção para esta semana era: "${S.weekIntention||'não havia definido'}"
+${reflDaSemana?'\nO QUE ESCREVI NAS MINHAS REFLEXÕES:\n'+reflDaSemana:''}
+
+COMO CONDUZIR A REUNIÃO:
+1. Comece com uma análise honesta da semana em 3-4 linhas
+2. Faça a pergunta mais importante que os dados levantam
+3. Espere minha resposta antes de continuar (é uma conversa, não um monólogo)
+4. Ao todo, faça 3 perguntas — uma por vez
+5. Feche com um plano de ação simples e concreto para a semana que começa
+
+Inicie a reunião agora.`;
+  $('tecnicoStart').style.display='none';
+  $('tecnicoChat').innerHTML=`<div class="tc-msg tecnico">
+    <div class="tc-label">🧠 PROMPT PRONTO</div>
+    <div class="tc-text">
+      <p>Cole esse prompt numa <b>nova conversa no Claude</b> (claude.ai/new) e conduza a reunião com o Técnico por lá. A conversa vai fluir naturalmente — o Claude vai te fazer as 3 perguntas e fechar com um plano de ação.</p>
+      <p style="color:var(--muted);font-size:12px;">Sugestão: salve a conversa no Claude como "Reunião com o Técnico — semana de ${fmtDate(days[0])}" para ter um histórico.</p>
+    </div>
+  </div>`;
+  $('tecnicoInputArea').style.display='none';
+  // Mostra botão de copiar
+  const btn=document.createElement('button');btn.className='btn';btn.style.cssText='width:100%;margin-top:12px;font-size:10px;';
+  btn.textContent='📋 COPIAR PROMPT DA REUNIÃO';
+  btn.onclick=()=>navigator.clipboard.writeText(prompt).then(()=>{toast('COPIADO! 🧠','Abra claude.ai/new e cole');});
+  $('tecnicoChat').appendChild(btn);
+}
+function sendTecnico(){} // não usado mais
+function addTecnicoMsg(){}
+function replaceTecnicoPlaceholder(){}
+async function loadMatches(){
+  const btn=$('refreshMatches');if(btn)btn.textContent='⏳';
+  showLoading('Buscando jogos de hoje…','Pesquisando na web.');
+  try{const today=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const text=await callAI([{role:'user',content:`Pesquise na web e liste TODOS os jogos de futebol HOJE (${today}) nos campeonatos: Brasileirão Série A, Libertadores, Sul-Americana, Copa do Mundo FIFA, Premier League, La Liga, Champions League, e jogos do Corinthians. Retorne APENAS JSON:\n[{"home":"Time A","away":"Time B","league":"Camp","time":"19:00","live":false}]\nSe não houver: []`}],
+      'Retorne apenas JSON válido.',1200,true);
+    let matches=[];try{const m=text.replace(/```json?|```/g,'').trim().match(/\[[\s\S]*\]/);matches=m?JSON.parse(m[0]):[];}catch(e){matches=[];}
+    S.matchesCache={date:todayKey(),data:matches,_ts:Date.now()};
+    persist();showMatches(matches);
+    if(!S.matchesCollapsed)$('matchesBody').style.display='block';
+  }catch(e){$('matchesList').innerHTML='<div class="empty small">Erro: '+esc(e.message)+'</div>';}
+  finally{hideLoading();if(btn)btn.textContent='↻';}
+}
+/* callAI — mantido APENAS para os jogos (web search via API) */
 async function callAI(messages,system,max_tokens=1800,use_web_search=false){
   const model=use_web_search?'claude-sonnet-4-5':'claude-haiku-4-5';
   const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -965,6 +1192,11 @@ $('tecnicoReply').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey
 $('markPaiBtn').addEventListener('click',markPai);
 $('brincarBtn').addEventListener('click',getBrincadeira);
 $('insightsBtn').addEventListener('click',generateInsights);
+$('promptClose').addEventListener('click',()=>$('promptOverlay').classList.remove('show'));
+$('promptCopy').addEventListener('click',()=>{
+  navigator.clipboard.writeText($('promptBox').textContent)
+    .then(()=>toast('COPIADO! ✅','Abra claude.ai/new e cole o prompt'));
+});
 $('matchesToggle').addEventListener('click',e=>{
   if(e.target.closest('#refreshMatches'))return;
   S.matchesCollapsed=!S.matchesCollapsed;

@@ -419,3 +419,9 @@ textarea{resize:vertical;min-height:90px;font-size:14px;line-height:1.6;}
 @keyframes fly{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-90px) scale(1.4);}}
 .foot{text-align:center;margin-top:30px;color:var(--muted);font-size:12px;font-weight:600;}
 .foot b{color:var(--neon-cyan);}
+
+/* modal de prompt */
+.prompt-box{background:rgba(7,11,24,.9);border:1px solid var(--line);border-radius:12px;
+  padding:14px;max-height:55vh;overflow-y:auto;font-size:13px;line-height:1.7;
+  color:var(--txt);font-family:'Rajdhani',sans-serif;font-weight:500;white-space:pre-wrap;
+  word-break:break-word;}

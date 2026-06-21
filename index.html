@@ -322,6 +322,20 @@
     </div>
   </div>
 
+  <!-- Modal copiar prompt -->
+  <div class="overlay" id="promptOverlay">
+    <div class="modal modal-wide">
+      <h3 id="promptTitle">✨ PROMPT PRONTO</h3>
+      <p id="promptDesc" style="color:var(--muted);font-size:13px;margin-bottom:12px;"></p>
+      <div class="prompt-box" id="promptBox"></div>
+      <div class="modal-actions" style="margin-top:14px;">
+        <button class="m-close" id="promptClose">FECHAR</button>
+        <button class="m-save" id="promptCopy">📋 COPIAR TUDO</button>
+      </div>
+      <div class="note">Cole numa nova conversa no <b>Claude</b>, GPT ou Gemini. O Claude gratuito (claude.ai) é o recomendado para cartas e reflexões.</div>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

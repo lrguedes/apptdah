@@ -798,6 +798,14 @@ Seja direto e objetivo. Máximo 150 palavras. Use os dados reais para embasar ca
   </div>`;
 }
 
+/* ── MODO PAI ── */
+function markPai(){
+  const today=todayKey();S.paiDates=S.paiDates||[];
+  if(S.paiDates.includes(today)){toast('JÁ REGISTRADO','Presença de hoje já marcada 💛');return;}
+  S.paiDates.push(today);recalcPaiStreak();addXP(15,true);persist();render();
+  toast('MODO PAI ✓','Dia registrado com Maria Clara 💛');
+  checkTrophy('pai_1');checkTrophy('pai_7');checkTrophy('pai_20');
+}
 function getBrincadeira(){
   const prompt=`Você é um especialista em desenvolvimento infantil e brincadeiras criativas para crianças de 5 anos.
 

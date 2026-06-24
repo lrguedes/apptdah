@@ -1088,21 +1088,26 @@ function ensureFields(){
   ensureFields();
   S.showAll=false;S.addMode='task';S.view='hoje';
   S.calYear=new Date().getFullYear();S.calMonth=new Date().getMonth();S.matchesCollapsed=false;
+
+  // FASE 1: renderiza com dados locais (sem persistir ainda)
   setStatus(Store.online()?'sync':'off');render();
 
   if(Store.online()){
     const remote=await Store.pull();
     if(remote){
-      // merge inteligente: usa o mais recente, mas preserva matchesCache pelo timestamp
       const localTs=S._updatedAt||0;const remoteTs=remote._updatedAt||0;
       const localMatchTs=S.matchesCache?._ts||0;const remoteMatchTs=remote.matchesCache?._ts||0;
-      if(remoteTs>localTs){
+
+      // PROTEÇÃO: se local não tem streak mas remoto tem, remoto sempre ganha
+      const localHasData=(S.totalXpEver||0)>0||(S.streak||0)>0;
+      const remoteHasData=(remote.totalXpEver||0)>0||(remote.streak||0)>0;
+
+      if(remoteTs>localTs||(remoteHasData&&!localHasData)){
         const savedMatchCache=localMatchTs>=remoteMatchTs?S.matchesCache:null;
         S=Object.assign(S,remote);ensureFields();
         if(savedMatchCache)S.matchesCache=savedMatchCache;
         S.showAll=false;S.addMode='task';S.view='hoje';Store.saveLocal(S);
       } else if(remoteMatchTs>localMatchTs){
-        // só o cache de jogos é mais novo no remoto
         S.matchesCache=remote.matchesCache;
       }
     }
@@ -1112,7 +1117,10 @@ function ensureFields(){
   if(!S._seededHabits&&S.habits.length===0){
     S.habits.push({id:'h0',name:'Tomar Venvanse',icon:'💊',sub:'07:00 · pico vem aí',doneDates:[]});S._seededHabits=true;}
 
-  pruneOldTasks();recalcPaiStreak();rollover();checkAllTrophies();persist();render();
+  pruneOldTasks();recalcPaiStreak();rollover();checkAllTrophies();
+
+  // FASE 2: só persiste DEPOIS do pull — nunca antes
+  persist();render();
 
   if(pendingMsg){setTimeout(()=>{
     if(pendingMsg.type==='shield')toast('ESCUDO ATIVADO 🛡️','Sequência preservada!');
